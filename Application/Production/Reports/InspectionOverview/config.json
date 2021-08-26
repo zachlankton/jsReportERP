@@ -1,0 +1,22 @@
+{
+    "name": "InspectionOverview",
+    "recipe": "html",
+    "shortid": "JwjYDccO6b",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ],
+    "creationDate": {
+        "$$date": 1623956692786
+    },
+    "modificationDate": {
+        "$$date": 1624585189278
+    },
+    "_id": "vtUTWplUNdZIm0OG",
+    "$entitySet": "templates"
+}

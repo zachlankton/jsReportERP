@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <style>
+        * {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                        supported by Chrome and Opera */
+        }
+        html {
+            font-family: sans-serif;
+        }
+        row {
+            display:flex;
+        }
+        cell {
+            border: 1px dashed gray;
+            flex: 1;
+            height: 50px;
+            margin: 1px;
+            line-height:50px;
+            text-align: center;
+            position: relative;
+        }
+        row>cell:first-child {
+            min-width: 150px;
+            max-width: 150px;
+        }
+
+        card {
+            position:absolute;
+            width: 100%;
+            height: 100%;
+            left: 0px;
+            top: 0px;
+            line-height: initial;
+            font-size: x-small;
+        }
+
+        card[job=Maint] {
+            border: 3px dotted green;
+            border-radius: 20px;
+            width: 80%;
+            height: 70%;
+            margin: 0 auto;
+            left: 10%;
+            margin-top: 5%;
+        }
+
+        selection {
+            border: 1px dotted #000;
+            position: absolute;
+        }
+
+        [selected=true] {
+            opacity: 0.5;
+        }
+
+        #drag-image {
+            height: 52px;
+            position: absolute;
+            display: flex;
+            top: -1000px;
+        }
+
+        card>p {
+            margin: 2px;
+        }
+
+        p.data {
+            background-color: green;
+            font-size: medium;
+        }
+    </style>
+    
+</head>
+<body>
+    <grid>
+    </grid>
+
+    <selection id="selection" hidden></selection>
+    <div id="drag-image"></div>
+</body>
+
+<script>
+    var grid = document.querySelector("grid");
+    
+    var headerRow = ["Machine", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var rowLabels = ["Counts", "Theresa", "Lazarus", "Jessica", "Ariel", "Johnny 5", "", "JOB", 
+                        "AAM", "Emerson", "Clek", "Tesla Cover", "Tesla Hsg", "MoTeC", "MS3", "SiOnyx", "Ethicon",
+                        "", "Maint"];
+    
+    var machines = ["Theresa", "Lazarus", "Jessica", "Ariel", "Johnny 5"];
+    
+    var jobs = {
+        "Counts":       {cards: 12,     color: "#e2e2e2",   machines: [                         ]        },
+        "AAM":          {cards: 8.5,    color: "green"  ,   machines: ["Theresa",   "Lazarus"   ]        },
+        "Emerson":      {cards: 0.5,    color: "#45ea45",   machines: ["Theresa"                ]        },
+        "Clek":         {cards: 4.5,    color: "#8282c7",   machines: ["Lazarus",   "Johnny 5"  ]        },
+        "MS3":          {cards: 2.0,    color: "orange" ,   machines: ["Jessica",   "Ariel"     ]        },
+        "MoTeC":        {cards: 2.0,    color: "pink"   ,   machines: ["Jessica",   "Ariel"     ]        },
+        "Tesla Cover":  {cards: 2.0,    color: "#ff6767",   machines: ["Theresa",   "Lazarus"   ]        },
+        "Tesla Hsg":    {cards: 2.0,    color: "yellow" ,   machines: ["Jessica",   "Ariel"     ]        },
+        "SiOnyx":       {cards: 2.0,    color: "gray"   ,   machines: ["Jessica",   "Ariel"     ]        },
+        "Ethicon":      {cards: 1.5,    color: "#da88da",   machines: ["Johnny 5"               ]        },
+        "Maint":        {cards: 12,     color: "#ffdeff",   machines                                     },
+    }
+
+    
+    var machineMatrix = {};
+    var maxMachinesRunning = 3;
+    var rows = rowLabels.length;
+    var cols = headerRow.length;
+    var gridHTML = ``;
+
+    createHeaderRow();
+    createRows();
+    grid.innerHTML = gridHTML;
+    generateMachineMatrix();
+    count();
+
+    
+    
+    
+
+    function createHeaderRow(){
+        gridHTML += `<row>`;
+        for (var x=0; x < cols; x++){
+            gridHTML += `<cell>${headerRow[x]}</cell>`;
+        }
+        gridHTML += `</row>`;
+    }
+
+    function createRows(){
+        
+        for (var x=0; x < rows; x++){
+            var rowLabel = rowLabels[x];
+            gridHTML += `<row row-label="${rowLabel}">`;
+            createRow(x);
+            gridHTML += `</row>`;
+        }
+        
+    }
+
+    function createRow(row){
+        for (var col=0; col < cols; col++){
+            createCell(row, col);
+        }
+    }
+
+    function createCell(row, col){
+        var rowLabel = rowLabels[row];
+
+        if (col == 0){
+            gridHTML += `<cell>${rowLabel}</cell>`;
+        }else{
+            card1_number = col * 2 - 2;
+            card2_number = col * 2 - 1;
+            card1 = generateCard(rowLabel, card1_number);
+            card2 = generateCard(rowLabel, card2_number);
+            gridHTML += `<cell ondrop="drop_handler(event)" ondragover="dragover_handler(event)" class="droppable" row="${rowLabel}">${card1}</cell>      
+                         <cell ondrop="drop_handler(event)" ondragover="dragover_handler(event)" class="droppable" row="${rowLabel}">${card2}</cell>`;
+        }
+    }
+
+    function generateCard(label, cardNumber){
+        if ( jobs[label] == undefined )        { return ``; }
+        if ( cardNumber >= jobs[label].cards * 2 ) { return ``; }
+
+        var color = jobs[label].color;
+        return `
+            <card ondragstart="dragstart_handler(event)" draggable="true" job="${label}" style="background-color:${color};">
+                <p>${label}</p>
+                <p class="data"></p>
+                <p class="maint"></p>
+            </card>
+        `;
+    }
+
+    function count(){
+        var countCards = document.querySelectorAll("[job=Counts]");
+        countCards.forEach(function(card, idx){
+            var data = card.querySelector(".data");
+            var maint = card.querySelector(".maint");
+            var totalMachinesRunning = 0;
+            var maintText = "";
+            machines.forEach(function(machine){
+                var children = machineMatrix[machine][idx].children;
+                if (children[0] && children[0].innerText == "Maint"){
+                    maintText = "Maint";
+                }else{
+                    totalMachinesRunning += machineMatrix[machine][idx].children.length;
+                }
+                
+            });
+            data.innerHTML = totalMachinesRunning;
+            maint.innerHTML = maintText;
+            if (totalMachinesRunning > maxMachinesRunning){data.style.backgroundColor = "red"}
+            else if (totalMachinesRunning == maxMachinesRunning){data.style.backgroundColor = "yellow"}
+            else{data.style.backgroundColor = ""}
+
+        });
+    }
+
+    function saveRows(){
+        var rows = {};
+        var rowElms = document.querySelectorAll("row");
+        rowElms.forEach(function(row){
+            var label = row.getAttribute("row-label");
+            rows[label] = row.innerHTML;
+        });
+        var results = JSON.stringify(rows);
+        console.log(results);
+        return results;
+    }
+
+    function loadRows(jsonStr){
+        // var rows = JSON.parse(jsonStr);
+        var rows = jsonStr;
+        var rowElms = document.querySelectorAll("row");
+        rowElms.forEach(function(row){
+            var label = row.getAttribute("row-label");
+            if (rows[label] != undefined){
+                row.innerHTML = rows[label];
+            }
+        });
+        generateMachineMatrix();
+        count();
+    }
+
+    function generateMachineMatrix(){
+        machines.forEach(function(machine){
+            machineMatrix[machine] = document.querySelectorAll(`[row="${machine}"]`)
+        })
+    }
+
+    function dragstart_handler(ev) {
+        ev.dataTransfer.dropEffect = "move";
+        var selectedCards = document.querySelectorAll("[selected=true]");
+        if (selectedCards.length > 0){
+            var dragImage = document.getElementById("drag-image");
+            dragImage.innerHTML = "";
+            var cardWidth = selectedCards[0].getBoundingClientRect().width + 4;
+            dragImage.style.width = selectedCards.length * cardWidth + "px";
+            selectedCards.forEach(function(card){
+                card.removeAttribute("selected");
+                dragImage.appendChild(card.parentElement.cloneNode(true));
+            });
+            ev.dataTransfer.setDragImage(dragImage, 20, 20);
+            window.draggedNode = selectedCards;
+        }else{
+            window.draggedNode = ev.target;
+        }
+
+    }
+
+    function dragover_handler(ev) {
+        ev.preventDefault();
+        ev.dataTransfer.dropEffect = "none";
+        var elm = window.draggedNode;
+        if (elm.length){ elm = elm[0]; }
+        var job = elm.getAttribute("job");
+        var row = ev.target.getAttribute("row");
+        var machinesAllowed = jobs[job].machines;
+
+        if                  (row == job)    {    ev.dataTransfer.dropEffect = "move";    }
+        if (machinesAllowed.includes(row))  {    ev.dataTransfer.dropEffect = "move";    }
+        
+
+    }
+
+
+    function drop_handler(ev) {
+        ev.preventDefault();
+        if (window.draggedNode.length){
+            var parent = ev.target;
+            window.draggedNode.forEach(function(card){
+                parent.appendChild(card);
+                parent = parent.nextElementSibling;
+            });
+        }else{
+            ev.target.appendChild(window.draggedNode);
+        }
+        count();
+        
+    }
+
+</script>
+
+<script>
+    var selection = document.getElementById('selection'), x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+    var inSelectMode = false;
+
+    function reCalc() { //This will restyle the selection
+        var x3 = Math.min(x1,x2) + window.scrollX; //Smaller X
+        var x4 = Math.max(x1,x2) + window.scrollX; //Larger X
+        var y3 = Math.min(y1,y2) + window.scrollY; //Smaller Y
+        var y4 = Math.max(y1,y2) + window.scrollY; //Larger Y
+        selection.style.left = x3 + 'px';
+        selection.style.top = y3 + 'px';
+        selection.style.width = x4 - x3 + 'px';
+        selection.style.height = y4 - y3 + 'px';
+        // getSelection();
+    }
+
+    function getSelection(){
+        var x3 = Math.min(x1,x2); //Smaller X
+        var x4 = Math.max(x1,x2); //Larger X
+        var y3 = Math.min(y1,y2); //Smaller Y
+        var y4 = Math.max(y1,y2); //Larger Y
+        var gridSize = 10;
+        var rows = parseInt((y4 - y3) / gridSize);
+        var cols = parseInt((x4 - x3) / gridSize);
+        
+        for (var y=0; y < rows; y++){
+
+            for (var x=0; x < cols; x++){
+
+                var elm = document.elementFromPoint(x*gridSize + x3,     y*gridSize + y3);
+                if (elm.nodeName == "CARD"){
+                    elm.setAttribute("selected", "true");
+                }
+
+            }
+
+        }
+    }
+
+    onmousedown = function(e) {
+        if (!e.target.draggable && !e.target.parentElement.draggable){
+            inSelectMode = true;
+            var selectedCards = document.querySelectorAll("[selected=true]");
+            selectedCards.forEach(function(card){card.removeAttribute("selected")})
+            selection.hidden = 0; //Unhide the selection
+            x1 = e.clientX; //Set the initial X
+            y1 = e.clientY; //Set the initial Y
+            x2 = e.clientX; //Set the initial X
+            y2 = e.clientY; //Set the initial Y
+            reCalc();
+        }
+        
+    };
+    
+    onmousemove = function(e) {
+        if (inSelectMode){
+            x2 = e.clientX; //Update the current position X
+            y2 = e.clientY; //Update the current position Y
+            reCalc();
+        }
+        
+    };
+
+    onmouseup = function(e) {
+        inSelectMode = false;
+        selection.hidden = 1; //Hide the selection
+        
+        getSelection();
+        var selectedCards = document.querySelectorAll("[selected=true]");
+        if (selectedCards.length > 0){
+            var firstType = selectedCards[0].getAttribute("job")
+            selectedCards.forEach(function(card){
+                var job = card.getAttribute("job");
+                if (job != firstType) {card.removeAttribute("selected");}
+            })
+        }
+        
+    };
+
+    function getOffset(el) {
+        const rect = el.getBoundingClientRect();
+        return {
+            left: rect.left + window.scrollX + (rect.width / 2),
+            top: rect.top + window.scrollY + (rect.height / 2)
+        };
+    }
+</script>
+</html>

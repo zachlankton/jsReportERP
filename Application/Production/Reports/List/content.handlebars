@@ -1,0 +1,127 @@
+{{#if user.isAuthenticated}}
+    {{#with query}}
+        {{defineSearch "search" ""}}
+    {{/with}}
+
+    {{#db_query 
+    "reports"
+    "   SELECT mmp.* FROM mmp
+        WHERE dbNamespace = '/ProductionReports'
+        ((searchQuery))
+        ORDER BY date DESC
+    "
+    }}
+
+    <div class="w3-row">
+        <column class="w3-col m2" >
+            <h4>Search All Ledger</h4>
+        </column>
+        
+        <input class="w3-col m6 w3-input w3-border" 
+                name="search" type="search" placeholder="Search..." 
+                value="{{query.search}}" autofocus 
+                onfocus="this.select()" 
+                onsearch="location.search='search=' + encodeURIComponent(this.value)"/>    
+        <column class="w3-col m2">
+            <p class="w3-center">
+                <a href="https://docs.couchbase.com/server/5.1/fts/query-string-queries.html" target="_blank">Query String Search Help</a>
+            </p>
+        </column>
+        <column class="w3-col m2">
+            <button class="w3-button w3-blue w3-round-large" onclick="exportAll()">Export Data</button>
+        </column>
+        
+    </div>
+
+<table class="w3-table-all w3-hoverable">
+    <thead>
+        <tr class="w3-blue">
+            <th>Date</th>
+            <th>Operation</th>
+            <th>Location</th>
+            <th>Part No.</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each reports}}
+        <tr>
+            <td style="cursor:pointer" onclick="location.href='/Production/Reports/Form?docid={{docid}}'+'&from='+location.pathname">{{date}}</td>
+            <td style="cursor:pointer" onclick="location.href='/Production/Reports/Form?docid={{docid}}'+'&from='+location.pathname">{{operation}}</td>
+            <td style="cursor:pointer" onclick="location.href='/Production/Reports/Form?docid={{docid}}'+'&from='+location.pathname">{{location}}</td>
+            <td style="cursor:pointer" onclick="location.href='/Production/Reports/Form?docid={{docid}}'+'&from='+location.pathname">{{partNo}}</td>
+            <td style="cursor:pointer" onclick="location.href='/Production/Reports/Form?docid={{docid}}'+'&from='+location.pathname">{{status}}</td>
+            <td><button class="w3-button w3-red" onclick="document.location.href='/Production/Reports/delete?docid={{docid}}'">X</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<script>
+    var reports = {{toJSON reports}};
+
+    function compileStrings(arr, field, qty) {
+        if(arr.length == 0 || (arr[0][field] == "" && arr[0][qty] == "")) {return "";}
+        var string = "";
+        arr.forEach((obj, idx) => {
+            if(idx > 0) {string = string + " " + obj[field] + ":" + obj[qty];}
+            else {string = string + obj[field] + ":" + obj[qty];}
+        });
+        return string;
+    }
+
+    function downloadFile(fileName, data, encoding) {
+        var downloadLink = document.createElement("a");
+        var blob = new Blob([data], {type : encoding});
+
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = fileName;
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+
+    function exportAll() {
+        var csvString = "DATE,OPERATION,LOCATION,PARTNO,START_TIME,END_TIME,OP_TIME,DWN_TIME,GOOD_QTY,SCRAP_QTY,GOAL_QTY,SCRAP_REASONS,DT_REASONS,NOTES" + "\n"; // Titles of each Column
+        
+        reports.forEach((obj, idx) => {
+            var totalScrap = totalArray(obj.scrap,"qty");
+            var totalDownTime = totalArray(obj.dt,"min");
+
+            var scrapReasons = compileStrings(obj.scrap,"reason","qty");
+            var dtReasons = compileStrings(obj.dt,"reason","min");
+
+            var startInMin = timeStringToMin(obj.sTime);
+            var endInMin = timeStringToMin(obj.eTime);
+            var totalOperationTime = endInMin - startInMin;
+
+            var notes = obj.notes.replace(/(\r\n|\n|\r|[,])/gm, " - "); // Clean the text so that there are no commas or line breaks
+
+            var row = obj.date+","+obj.operation+","+obj.location+","+obj.partNo+","+obj.sTime+","+obj.eTime+","+totalOperationTime+","+totalDownTime+","+obj.good+","+totalScrap+","+obj.goal+","+scrapReasons+","+dtReasons+","+notes+"\n";
+
+            csvString = csvString + row; // Add a row to the CSV data
+        });
+        
+        downloadFile("All_Reports.csv",csvString,"data:text/csv;charset=utf-8");
+    }
+
+    function timeStringToMin(timeString) {
+        if(!timeString) {return 0}
+        var hoursMinutes = timeString.split(/[.:]/);
+        var hours = parseInt(hoursMinutes[0], 10);
+        var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+        return hours*60 + minutes;
+    }
+
+    function totalArray(arr, toSum) {
+        var total = 0;
+        arr.forEach((obj) => {total = total + Number(obj[toSum])})
+        return total;
+    }
+</script>
+
+    {{/db_query}}
+
+{{/if}}

@@ -1,0 +1,224 @@
+{{#if user.isAuthenticated}}
+{{use_save_handler_for_db "/HR/employees"}}
+{{#db_query
+    "getinfo"
+    "
+        SELECT mmp.* FROM mmp WHERE meta(mmp).id = '/HR/employees/((user.id))'
+    "
+}}
+
+<!-- vvvvvvvvv  Doc Disp Modal (modal displays on render if a document is requested)  vvvvvvvvvvvvv -->
+<div id="docmodal" class="w3-modal" style="display:{{modalDisplay}}" onclick="document.getElementById('docmodal').style.display='none'">
+    <div class="w3-modal-content">
+        <div class="w3-container">
+            <span onclick="document.getElementById('docmodal').style.display='none'" class="w3-button w3-red w3-display-topright">&times;</span>
+            {{pdfViewer}}
+        </div>
+    </div>
+</div> <!-- ^^^^^^^^^^^^  End Modal  ^^^^^^^^^^^^ -->
+
+<div class="w3-row" d-data name="info">
+    <input type="hidden" name="docid" value="{{user.id}}" />
+    {{#with getinfo.[0]}}
+    <input type="hidden" name="rev"   value="{{rev}}" />
+    {{/with}}
+    <!-- vvvvvvvvvvvvvvvvvvvvvvv Column 1 (quarter) vvvvvvvvvvvvvvvvvvvvvv -->
+    <!-- BEGIN PDF DISPLAY AREA -->
+    <div class="w3-col w3-quarter w3-center w3-pale-yellow">
+        <h4>Pay Stubs</h4>
+        <ul>
+        {{#each stubs}}
+            <li><a href="?stubid={{name}}">{{name}}</a></li>
+        {{/each}}
+        </ul>
+        <h4>Other Personal Docs</h4>
+        <ul>
+        {{#each otherDocs}}
+            <li><a href="?otherid={{name}}">{{name}}</a></li>
+        {{/each}}
+        </ul>
+        <h4>Employee Docs</h4>
+        <ul>
+        {{#each aeDocs}}
+            <li><a href="?aeid={{name}}">{{name}}</a></li>
+        {{/each}}
+        </ul>
+    </div>
+    <!-- END PDF DISPLAY AREA -->
+    <!-- vvvvvvvvvvvvvvvvvvvvvvv Column 2 (three-quarter) vvvvvvvvvvvvvvvvvvvvvv -->
+    <!-- BEGIN EMPLOYEE INFORMATION AREA -->
+    <div class="w3-col w3-threequarter w3-center">
+        <div class="w3-row">
+            <!-- vvvvvvvvvvvvvvvvvvvvvvv Column 2-1 (half) vvvvvvvvvvvvvvvvvvvvvv -->
+            <div class="w3-col w3-half w3-center w3-container">
+                <!-- ----------------------  SYSTEM USER INFO  ------------------------ -->
+                <div class="w3-card-4 w3-margin-bottom">
+                    <div class="w3-container w3-blue">
+                        <h2>System Info.</h2>
+                    </div>
+                    <div class="w3-container">
+                        <div class="w3-row">
+                            <h5 class="w3-col w3-third w3-left-align">Name:</h5>
+                            <h3 class="w3-col w3-twothird">{{user.firstName}} {{user.lastName}}</h3>
+                        </div>
+                        <div class="w3-row">
+                            <h5 class="w3-col w3-third w3-left-align">User Name:</h5>
+                            <h3 class="w3-col w3-twothird">{{user.username}} ({{user.id}})</h3>
+                        </div>
+                        <div class="w3-row">
+                            <h5 class="w3-col w3-third w3-left-align">Email Address:</h5>
+                            <h3 class="w3-col w3-twothird">{{user.email}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <!-- ---------------  EMPLOYEE ADDRESS  ----------------- -->
+                <div class="w3-card-4 w3-margin-bottom">
+                    <div class="w3-container w3-blue">
+                        <h2>Address</h2>
+                    </div>
+                    {{#with getinfo.[0]}}
+                    <div class="w3-container w3-padding-16">
+                        {{#if address_changed}}
+                        <input type="hidden" name="address_changed" value="true">
+                        {{else}}
+                        <input type="hidden" name="address_changed" value="false">
+                        {{/if}}
+                        <div class="w3-col s12">
+                            <input class="w3-input w3-border" type="text" name="address_1" onchange="show('address_save')" placeholder="Address 1" value="{{address_1}}">
+                        </div>
+                        <div class="w3-col s12">
+                            <input class="w3-input w3-border" type="text" name="address_2" onchange="show('address_save')" placeholder="Address 2" value="{{address_2}}">
+                        </div>
+                        <div class="w3-col s7">
+                            <input class="w3-input w3-border" type="text" name="address_city" onchange="show('address_save')" placeholder="City" value="{{address_city}}">
+                        </div>
+                        <div class="w3-col s2">
+                            <input class="w3-input w3-border" type="text" name="address_state" onchange="show('address_save')" placeholder="State" value="{{address_state}}">
+                        </div>
+                        <div class="w3-col s3">
+                            <input class="w3-input w3-border" type="text" name="address_zip" onchange="show('address_save')" placeholder="Zip Code" value="{{address_zip}}">
+                        </div>
+                    </div>
+                    <div id="address_save" class="w3-container w3-padding-16" style="display:none">
+                        <button class="w3-button w3-green" onclick="dData.info.address_changed = 'true'; dData.save(this);">Save Changes</button>
+                    </div>
+                    {{/with}}
+                </div>
+                <!-- --------------------  EMPLOYEE CONTACT INFO ------------------ -->
+                <div class="w3-card-4 w3-margin-bottom">
+                    <div class="w3-container w3-blue">
+                        <h2>Contact Info.</h2>
+                    </div>
+                    <div class="w3-container w3-padding-16">
+                        <div class="w3-col s12">
+                            <label>Cell Phone:</label>
+                            <input class="w3-input w3-border" type="tel" onchange="show('contact_save')" value="{{user.mobilePhone}}">
+                        </div>
+                        <div class="w3-col s12">
+                            <label>Alternative Email:</label>
+                            <input class="w3-input w3-border" type="email" name="email" onchange="show('contact_save')" placeholder="Joe@gmail.com" value="{{getinfo.[0].email}}">
+                        </div>
+                    </div>
+                    <div id="contact_save" class="w3-container w3-padding-16" style="display:none">
+                        <button class="w3-button w3-green" onclick="dData.save(this);">Save Changes</button>
+                    </div>
+                </div>
+                <!-- --------------------  EMPLOYEE EMERGENCY CONTACT INFO  ---------------------- -->
+                <div class="w3-card-4 w3-margin-bottom">
+                    <div class="w3-container w3-red">
+                        <h2>Emergency Contact</h2>
+                    </div>
+                    {{#with getinfo.[0]}}
+                    <div class="w3-container w3-padding-16">
+                        <div class="w3-col s8">
+                            <label>Name:</label>
+                            <input class="w3-input w3-border" type="text" name="EC_name" onchange="show('ec_save')" placeholder="Jane Doe" value="{{EC_name}}">
+                        </div>
+                        <div class="w3-col s4">
+                            <label>Relation:</label>
+                            <input class="w3-input w3-border" type="text" name="EC_relation" onchange="show('ec_save')" placeholder="Wife" value="{{EC_relation}}">
+                        </div>
+                        <div class="w3-col s12">
+                            <label>Cell Phone:</label>
+                            <input class="w3-input w3-border" type="tel" name="EC_cell" onchange="show('ec_save')" placeholder="(555) 555-5555" value="{{EC_cell}}">
+                        </div>
+                        <div class="w3-col s12">
+                            <label>Email:</label>
+                            <input class="w3-input w3-border" type="email" name="EC_email" onchange="show('ec_save')" placeholder="Joe@helloworld.com" value="{{EC_email}}">
+                        </div>
+                    </div>
+                    {{/with}}
+                    <div id="ec_save" class="w3-container w3-padding-16" style="display:none">
+                        <button class="w3-button w3-green" onclick="dData.save(this);">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+            {{#ifHasRole "Admin"}}
+            <!-- vvvvvvvvvvvvvvvvvvvvvvv Column 2-2 (half) vvvvvvvvvvvvvvvvvvvvvv -->
+            <div class="w3-col w3-half w3-center w3-container">
+                <!-- ----------------------  PTO STATUS  ------------------------ -->
+                <div class="w3-card-4 w3-margin-bottom">
+                    <div class="w3-container w3-blue">
+                        <h2>PTO</h2>
+                    </div>
+                    <div class="w3-container w3-padding-16">
+                        <div class="w3-col s5">
+                            <h1>30</h1>
+                            <p>Available:</p>
+                        </div>
+                        <div class="w3-col s2">
+                            <h1>/</h1>
+                            <p>&nbsp;</p>
+                        </div>
+                        <div class="w3-col s5">
+                            <h1>40</h1>
+                            <p>Total:</p>
+                        </div>
+                        <div class="w3-col s12 w3-green">
+                            <div id="pto_bar" class="w3-container w3-red w3-center" style="height:40px; width:100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ----------------------  BENEFITS INFO  ------------------------ -->
+                <div class="w3-card-4 w3-margin-bottom">
+                    <div class="w3-container w3-blue">
+                        <h2>Benefits</h2>
+                    </div>
+                    <div class="w3-container w3-padding-16">
+                        Item - Withholding Amount
+                    </div>
+                </div>
+            </div>
+            {{/ifHasRole}}
+        </div>
+    </div>
+    <!-- END EMPLOYEE INFORMATION AREA -->
+</div>
+<script>
+
+    function show(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function ptoAnimation(tp, ap) {
+        var elem = document.getElementById("pto_bar");
+        var perc = Math.round((1-ap/tp)*100);
+        var width = 100;
+        var id = setInterval(frame, 20);
+        function frame() {
+            if (width == perc) {
+            clearInterval(id);
+            } else {
+            width--;
+            elem.style.width = width + '%';
+            }
+        }
+    }
+
+    ptoAnimation(40,30);
+</script>
+
+{{/db_query}}
+{{else}}
+    <h1> Not Logged In!</h1>
+{{/if}}

@@ -1,0 +1,17 @@
+{
+    "shortid": "r2g5izFQbg",
+    "name": "audit_log",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1603418599921
+    },
+    "modificationDate": {
+        "$$date": 1603422237245
+    },
+    "_id": "B0DqJkeCienCcfFF",
+    "$entitySet": "templates"
+}

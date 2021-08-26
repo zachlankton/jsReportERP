@@ -1,0 +1,22 @@
+{
+    "shortid": "bp7195okBH",
+    "name": "Form",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1621392246781
+    },
+    "modificationDate": {
+        "$$date": 1629838504615
+    },
+    "_id": "GZPvxSY6NK8VdSTT",
+    "$entitySet": "templates",
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ]
+}

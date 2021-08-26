@@ -1,0 +1,25 @@
+{
+    "shortid": "6nYXjtD4oC",
+    "name": "employee-portal",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1612195470526
+    },
+    "modificationDate": {
+        "$$date": 1615095394030
+    },
+    "_id": "f9ofMIKJgvQO6JPD",
+    "$entitySet": "templates",
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        },
+        {
+            "shortid": "yn_BVFPw1A"
+        }
+    ]
+}

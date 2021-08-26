@@ -1,0 +1,127 @@
+
+
+{{#if user.isAuthenticated}}
+{{#ifHasRole "Sales"}}
+    {{use_save_handler_for_db "/Sales"}}
+    {{#db_query 
+    "salesOrder"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/Sales/((query.docid))'
+    "
+
+    "customers" 
+    "   SELECT DISTINCT customer FROM mmp
+        WHERE meta(mmp).id LIKE '/Quotes/%'
+        ORDER BY customer"
+
+    "quoteGroups" 
+    "   SELECT DISTINCT quoteGroup FROM mmp
+        WHERE meta(mmp).id LIKE '/Quotes/%'
+        ORDER BY quoteGroup"
+    
+
+    }}
+        
+        {{arrayOfStrings "customers" "customer"}}
+        {{arrayOfStrings "quoteGroups" "quoteGroup"}}
+        {{!-- <textarea class="w3-small w3-block" style="height: 500px" readonly>{{toJSON salesOrder}}</textarea> --}}
+        
+
+        {{#with salesOrder.[0]}}
+        <form style="" class="" d-data name="quoteForm" onsubmit="return false" autocomplete="off">
+            {{#row}}
+                
+                <div class="w3-col" style="max-width:725px;">
+                    <h1 w3-center>Sales Order</h1>
+                    {{#row "w3-row-padding"}}
+                        {{#col "m6"}}
+                            {{date "Order Date" "po_date"}}
+                            {{input "Customer Sales Order No." "po_no"}}
+                            {{input "Order No" "docid"}}
+                            {{input "Order Title" "title"}}
+                            {{datalist "Customer" "customer" "customers"}}
+                        {{/col}}
+                        {{#col "m6"}}
+                                            
+                            {{#select "Order Status" "docstatus"}}
+                                {{opt "Draft"}}
+                                {{opt "Cancelled"}}
+                                {{opt "Acknowledged"}}
+                                {{opt "To Bill"}}
+                                {{opt "Invoiced"}}
+                                {{opt "Paid"}}
+                                {{opt "Closed"}}
+                                {{opt "Archived"}}
+                            {{/select}}
+            
+                            {{input "Contact" "contact_display"}}
+                            {{input "Representative" "representative"}}
+                            {{input "Terms" "terms"}}                  
+                            {{input "Delivery" "delivery"}}            
+                            {{input "FOB" "FOB"}}                      
+                        {{/col}}
+                    {{/row}}
+                    {{#row "w3-row-padding"}}
+                        {{#col "m6"}}
+                            {{textarea "Bill To" "address_display"}}
+                        {{/col}}
+                        {{#col "m6"}}
+                            {{textarea "Ship To" "shipping_address"}}
+                        {{/col}}
+                    {{/row}}
+
+                
+                    {{#dDataEach "so_items" "Add Line Item"}}
+                
+                    <div class="w3-card-2 w3-border w3-light-grey w3-margin">
+                        <header class="w3-container w3-hover-blue w3-theme w3-block w3-btn w3-left-align" onclick="toggleAccordion(this)">
+                            <h6>Line Item {{@index}}  {{removeBtn}} </h6>
+                        </header>
+                        {{#row "accordion w3-row-padding"}}
+                            {{#col "m6"}}
+                                {{input "Part No" "item_name"}}
+                                {{textarea "Part Description" "description"}}
+                                
+                            {{/col}}
+                            {{#col "m6"}}
+                                {{date "Required By" "reqd_by_date"}}
+                                {{input "Quantity" "qty"}}
+                                {{input "Rate" "rate"}}
+                            {{/col}}
+                        {{/row}}
+                    </div>
+                    {{/dDataEach}}
+
+
+                    {{#row "w3-margin-bottom"}}
+                        {{#col "m12"}} {{textarea "Notes" "notes"}}                 {{/col}}
+                    {{/row}}
+                    <hr class="w3-border-theme">
+                </div>
+                
+                {#child /Components/doc_side_bar @data.baseURL=/Sales @data.docSideBar$={{{childTemplateSerializeData this}}} }
+                {{fix_jsreport_child_template_percent_sign_bug}}
+            {{/row}}
+            {#child /Components/audit_log @data.auditLog$={{{childTemplateSerializeData this}}} }
+            {{fix_jsreport_child_template_percent_sign_bug}}
+        </form>
+        {{!-- end d-data div --}}
+
+        {{/with}}
+
+       
+
+    {{/db_query}}
+
+{{else}}
+
+    <h4>You do Not have permission to view this resource</h4>
+
+{{/ifHasRole}}
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    
+    {#child /Application/login}
+{{/if}}

@@ -1,0 +1,17 @@
+{
+    "shortid": "nUIozMbAYQ",
+    "name": "punch",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1614314687129
+    },
+    "modificationDate": {
+        "$$date": 1614382342495
+    },
+    "_id": "ycCgP44STKvxAIBz",
+    "$entitySet": "templates"
+}

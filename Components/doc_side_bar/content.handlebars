@@ -1,0 +1,35 @@
+{{#with docSideBar}}
+
+<style>
+     @media only screen and (min-width: 1240px) {
+        #doc_side_bar {
+            position: fixed;
+            left: 1000px;
+            right: 50px;
+            max-width: 300px !important;
+        }
+    }
+</style>
+<div id="doc_side_bar" class="w3-rest" style="min-width: 225px; max-width:725px;">
+    <div class="w3-block" style="height: 50px;"></div>
+    <button disabled id="dDataSaveBtn" class="w3-btn w3-block w3-green w3-large w3-margin-top" onclick="dData.save(this)"><i class="far fa-save"></i> Save</button>
+    <button class="w3-btn w3-block w3-pale-green w3-large w3-margin-top" onclick="dData.saveNew(this)"><i class="far fa-save"></i> Save As New</button>
+    <button class="w3-btn w3-block w3-yellow w3-large w3-margin-top" {{onclickPDF}}><i class="far fa-file-pdf"></i> PDF</button>
+    <button class="w3-btn w3-block w3-red w3-large w3-margin-top" {{onclickDelete}}><i class="fas fa-trash"></i> Delete</button>
+    <button class="w3-btn w3-block w3-theme w3-large w3-margin-top" {{onclickGoBackToList}}><i class="fas fa-list"></i> Go Back To List</button>
+    <div class="w3-card w3-border w3-margin-top w3-light-grey">
+        <header class="w3-container w3-theme w3-padding">
+        </header>
+        <div class="w3-padding w3-small">
+            <div>Doc ID: {{dSpan "docid"}}                </div>
+            <div>Revision: {{dSpan "rev"}} of {{latestRev}}    {{generate_nav_links}}           </div>
+            <div>Created By: {{dSpan "createdBy"}}        </div>
+            <div>Created At: {{prettyDate created}}        </div>
+            <div class="w3-hide"> {{dSpan "created"}} </div>
+            <div>Modified Last By: {{dSpan "modifiedBy"}} </div>
+            <div>Modified Last At: {{prettyDate modified}} </div>
+            <div class="w3-hide"> {{dSpan "modified"}} </div>
+        </div>
+    </div>
+</div>
+{{/with}}

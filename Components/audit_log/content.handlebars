@@ -1,0 +1,31 @@
+{{#with auditLog}}
+{{#row}}
+    <div class="w3-col w3-card w3-light-grey w3-hide-small" style="max-width:725px;">
+        <header class="w3-container w3-theme w3-hover-blue w3-block w3-btn w3-left-align" onclick="toggleAccordion(this)">
+            <h6>Audit Log</h6>
+        </header>
+        
+        <div class="w3-margin w3-padding accordion w3-hide" >
+            {{#dDataEach "auditLog" ""}}
+            <div class="w3-padding-16">
+                Rev {{dSpan "rev"}} - {{dSpan "modifiedBy"}} <br> {{hidden "modified"}} {{prettyDate modified}}
+                    <div style="padding-left: 16px;">
+                        <div class="w3-row w3-border-top w3-large">
+                            {{#col 's4'}} Key {{/col}}
+                            {{#col 's4'}} Old {{/col}}
+                            {{#col 's4'}} New {{/col}}
+                        </div>
+                        {{#dDataEach "changes" ""}}
+                        <div class="w3-row w3-row-padding w3-border-top w3-tiny">
+                            {{#col 's4'}} {{dSpanKey "key"}} {{/col}}
+                            {{#col 's4'}} "{{dSpanPre "oldVal"}}" {{/col}}
+                            {{#col 's4'}} "{{dSpanPre "newVal"}}" {{/col}}
+                        </div>
+                        {{/dDataEach}}
+                    </div>
+            </div>
+            {{/dDataEach}}
+        </div>
+    </div>
+{{/row}}
+{{/with}}

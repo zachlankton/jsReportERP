@@ -1,0 +1,54 @@
+{{#if user.isAuthenticated}}
+{{#ifHasRole "timeclock"}}
+
+<head>
+    <title>mmpERP</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="MMP ERP!">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/w3.css @encoding=link}">
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/mmp-style.css @encoding=link}">
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/free.min.css @encoding=link}">
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/free-v4-font-face.min.css @encoding=link}">
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/free-v4-shims.min.css @encoding=link}">
+    <script src="{#asset Application/Assets/Scripts/autocomplete.js @encoding=link}"> </script>
+    
+    <style>
+    html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+    </style>
+</head>
+
+<div class="w3-container">
+    <div class="w3-row">
+        <h2 class="w3-panel w3-blue w3-center " id="dispClk"></h2>
+    </div>
+    <div class="w3-row">
+        {{#each users}}
+        {{#if (isEmployee this)}}
+        <div class="w3-third w3-padding">
+            <button class="w3-button w3-red w3-round-xxlarge" style="width:100%; height:4em; font-size:2em;" onclick="location.href='/HR/TC/punch?user={{id}}'">{{firstName}} {{lastName}}</button>
+        </div>
+        {{/if}}
+        {{/each}}
+    </div>
+</div>
+
+<script>
+    let dispTime = {{serverTime}};
+    let dispElm = document.getElementById("dispClk");
+
+    function updateClock() {
+        dispTime = dispTime + 1000;
+        dispElm.innerText = new Date(dispTime);
+    }
+
+    updateClock();
+
+    setInterval(updateClock, 1000);
+</script>
+
+{{else}}
+    You do not have permission to use the time clock.
+{{/ifHasRole}}
+{{/if}}

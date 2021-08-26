@@ -1,0 +1,433 @@
+{{#if user.isAuthenticated}}
+
+
+
+    {{use_save_handler_for_db "/ProductionReports"}}
+
+    {{#db_query 
+    "report"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/ProductionReports/((query.docid))'
+    "
+
+    "revisions"
+    "   SELECT mmp.* FROM mmp
+        WHERE docid = '((query.docid))'
+        AND dbNamespace = '/Audit/ProductionReports'
+        ORDER BY rev DESC
+    "
+    }}
+<script src="{#asset Application/Assets/Scripts/socket.io.js @encoding=link}"> </script> {{!-- [[[]]] Import SOCKET.IO [[[]]] --}}
+
+<form d-data name="pReport" onsubmit="return false">
+    <button onclick="backToPrevious()">Back to List</button>
+    <button class="w3-green" id="dDataSaveBtn" onclick="submitForm()">SAVE</button>
+    {{#with report.[0]}}
+    <input type="hidden" id="idEl" name="docid" value="{{docid}}">
+    <input type="hidden" name="rev" value="{{rev}}">
+    <div class="w3-card w3-row w3-margin"> <!-- ================  CARD 1  ============== -->
+        <div class="w3-half w3-padding">
+            <label>Date</label>
+            <input class="w3-input" type="date" name="date" value="{{date}}">
+
+            <div class="maintenance">
+                <label>Part Number</label>
+                <input class="w3-input" type="text" name="partNo" value="{{partNo}}">
+            </div>
+
+            <label>Description</label>
+            <input class="w3-input" type="text" name="description" value="{{description}}">
+
+            <div class="maintenance">
+                <label>Goal</label>
+                <input class="w3-input" type="number" name="goal" value="{{goal}}">
+            </div>
+        </div>
+        <div class="w3-half w3-padding">
+            <label>Operation</label>
+            <select class="w3-select" name="operation" value="{{operation}}" onchange="hideShow()">
+                <option value="Thixo"            {{#if (selected operation "Thixo")          }}selected{{/if}}>Thixomold & Trim</option>
+                <option value="Machine"          {{#if (selected operation "Machine")        }}selected{{/if}}>Machine</option>
+                <option value="Plating"          {{#if (selected operation "Plating")        }}selected{{/if}}>Plating</option>
+                <option value="Coating"          {{#if (selected operation "Coating")        }}selected{{/if}}>Coating</option>
+                <option value="Buffing"          {{#if (selected operation "Buffing")        }}selected{{/if}}>Buffing</option>
+                <option value="Inspection"       {{#if (selected operation "Inspection")     }}selected{{/if}}>Inspection</option>
+                <option value="Vibing"           {{#if (selected operation "Vibing")         }}selected{{/if}}>Vibratory Finish</option>
+                <option value="Maintenance"      {{#if (selected operation "Maintenance")    }}selected{{/if}}>Maintenance</option>
+                <option value="plannedShutDown"  {{#if (selected operation "plannedShutDown")}}selected{{/if}}>Planned Shutdown</option>
+                <option value="Other"            {{#if (selected operation "Other")          }}selected{{/if}}>Other</option>
+            </select>
+
+            <label>Location</label>
+            <select class="w3-select" name="location" value="{{location}}">
+                <option value="Lazarus" {{#if (selected location "Lazarus")}}selected{{/if}}>Lazarus</option>
+                <option value="Theresa" {{#if (selected location "Theresa")}}selected{{/if}}>Theresa</option>
+                <option value="Jessica" {{#if (selected location "Jessica")}}selected{{/if}}>Jessica</option>
+                <option value="Ariel"   {{#if (selected location "Ariel")}}selected{{/if}}>Ariel</option>
+                <option value="Johnny5" {{#if (selected location "Johnny5")}}selected{{/if}}>Johny 5</option>
+                <option value="Zagar"   {{#if (selected location "Zagar")}}selected{{/if}}>Zagar Machining Center</option>
+                <option value="Inspection Area"   {{#if (selected location "Inspection Area")}}selected{{/if}}>Inspection Area</option>
+                <option value="Quarantine Area"   {{#if (selected location "Quarantine Area")}}selected{{/if}}>Quarantine Area</option>
+                <option value="Other"   {{#if (selected location "Other")}}selected{{/if}}>Other</option>
+            </select>
+
+            <label>Operators</label>
+                {{#unless operators}}
+            <div d-data name="operators">
+                <div class="w3-row">
+                    <input class="w3-input w3-col m11" type="text" name="operator">
+                    <button class="w3-red w3-col m1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                </div>
+            </div>
+                {{/unless}}
+                {{#each operators}}
+            <div d-data name="operators">
+                <div class="w3-row">
+                    <input class="w3-input w3-col m11" type="text" name="operator" value="{{operator}}">
+                    <button class="w3-red w3-col m1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                </div>
+            </div>
+                {{/each}}
+            <button class="w3-button w3-yellow" onclick="dData.add('operators',this);">Add Operator</button>
+        </div>
+    </div> <!-- ================  END CARD 1  ============== -->
+    <div class="w3-row w3-card w3-margin"> <!-- ================  CARD 2  ============== -->
+        <div class="w3-quarter w3-padding">
+            <div class="maintenance">
+                <label>Raw Material ID(s)</label>
+                    {{#unless rawMaterialIDs}}
+                <div d-data name="rawMaterialIDs">
+                    <div class="w3-row">
+                        <input class="w3-input w3-col m11" type="number" max="999" name="idNo">
+                        <button class="w3-red w3-col m1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                    </div>
+                </div>
+                    {{/unless}}
+                    {{#each rawMaterialIDs}}
+                <div d-data name="rawMaterialIDs">
+                    <div class="w3-row">
+                        <input class="w3-input w3-col m11" type="number" max="999" name="idNo" value="{{idNo}}">
+                        <button class="w3-red w3-col m1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                    </div>
+                </div>
+                    {{/each}}
+                <button class="w3-button w3-yellow" onclick="dData.add('rawMaterialIDs',this);">Add Bag No.</button>
+                <br>
+            </div>
+            <label>Start Time</label>
+            <input class="w3-input" type="time" onchange="updateTotalTime()" name="sTime" value="{{sTime}}">
+
+            <label>End Time</label>
+            <input class="w3-input" type="time" onchange="updateTotalTime()" name="eTime" value="{{eTime}}">
+        </div>
+        <div class="w3-threequarter w3-padding">
+            <label>Notes:</label>
+            <textarea name="notes" style="width: 100%;">{{notes}}</textarea>
+        </div>
+    </div> <!-- ================  END CARD 2  ============== -->
+    <div class="w3-row w3-card w3-margin w3-padding maintenance"> <!-- ================  CARD 3  ============== -->
+        <div class="w3-half w3-padding">
+            <label>Good Parts Produced</label>
+            <input id="goodParts" class="w3-input" type="number" name="good" onchange="sumScrap()" value="{{good}}">
+
+            <label>Scrap Parts Produced</label>
+            <input id="totalScrap" class="w3-input" type="number" disabled>
+
+            <label>Scrap Percentage</label>
+            <input id="scrapPercent" class="w3-input" type="text" disabled>
+        </div>
+        <div class="w3-half w3-padding">
+            <label>Good Parts Status</label>
+            <select class="w3-select" name="status" value="{{status}}">
+                <option value=""                  {{#if (selected status "")}}selected{{/if}}                  >Not Stated</option>
+                <option value="Molded"            {{#if (selected status "Molded")}}selected{{/if}}            >Molded</option>
+                <option value="Machined"          {{#if (selected status "Machined")}}selected{{/if}}          >Machined</option>
+                <option value="Plated"            {{#if (selected status "Plated")}}selected{{/if}}            >Plated</option>
+                <option value="Coated"            {{#if (selected status "Coated")}}selected{{/if}}            >Coated</option>
+                <option value="Buffed-Molded"     {{#if (selected status "Buffed-Molded")}}selected{{/if}}     >Buffed-Molded</option>
+                <option value="Buffed-Machined"   {{#if (selected status "Buffed-Machined")}}selected{{/if}}   >Buffed-Machined</option>
+                <option value="Inspected-Molded"  {{#if (selected status "Inspected-Molded")}}selected{{/if}}  >Inspected-Molded</option>
+                <option value="Inspected-Machined"{{#if (selected status "Inspected-Machined")}}selected{{/if}}>Inspected-Machined</option>
+                <option value="Inspected-Plated"  {{#if (selected status "Inspected-Plated")}}selected{{/if}}  >Inspected-Plated</option>
+                <option value="Inspected-Coated"  {{#if (selected status "Inspected-Coated")}}selected{{/if}}  >Inspected-Coated</option>
+                <option value="Vibed"             {{#if (selected status "Vibed")}}selected{{/if}}             >Vibed</option>
+                <option value="Other"             {{#if (selected status "Other")}}selected{{/if}}             >Other</option>
+            </select>
+
+            <label>Total Up Time</label>
+            <input id="totalTime" class="w3-input" type="text" disabled>
+
+            <label>OEE Percentage</label>
+            <input id="oee" class="w3-input" type="text" disabled value="100%">
+        </div>
+    </div> <!-- ================  END CARD 3  ============== -->
+    <div class="w3-row w3-card w3-margin maintenance"> <!-- ================  CARD 4  ============== -->
+        <div class="w3-half w3-padding">
+            <div class="w3-container w3-red">
+                <h4>Scrap</h4>
+            </div>
+            <div class="w3-row">
+                <label class="w3-threequarter">Reason</label>
+                <label class="w3-quarter">Quantity</label>
+            </div>
+                {{#unless scrap}}
+            <div d-data name="scrap">
+                <div class="w3-row">
+                    <div class="w3-col s8 w3-padding">
+                        <input class="w3-input" type="text" name="reason">
+                    </div>
+                    <div class="w3-col s3 w3-padding">
+                        <input class="w3-input" type="number" name="qty" onchange="sumScrap()">
+                    </div>
+                    <button class="w3-button w3-red w3-col s1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                </div>
+            </div>
+                {{/unless}}
+                {{#each scrap}}
+            <div d-data name="scrap">
+                <div class="w3-row">
+                    <div class="w3-col s8 w3-padding">
+                        <input class="w3-input" type="text" name="reason" value="{{reason}}">
+                    </div>
+                    <div class="w3-col s3 w3-padding">
+                        <input class="w3-input" type="number" name="qty" onchange="sumScrap()" value="{{qty}}">
+                    </div>
+                    <button class="w3-button w3-red w3-col s1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                </div>
+            </div>
+                {{/each}}
+            <button class="w3-button w3-yellow" onclick="dData.add('scrap',this);">Add Scrap Reason</button>
+        </div>
+        <div class="w3-half w3-padding">
+            <div class="w3-container w3-red">
+                <h4>Down Time</h4>
+            </div>
+            <div class="w3-row">
+                <label class="w3-threequarter">Reason</label>
+                <label class="w3-quarter">No. of Minutes</label>
+            </div>
+                {{#unless dt}}
+            <div d-data name="dt">
+                <div class="w3-row">
+                    <div class="w3-col s8 w3-padding">
+                        <input class="w3-input" type="text" name="reason">
+                    </div>
+                    <div class="w3-col s3 w3-padding">
+                        <input class="w3-input" type="number" onchange="updateTotalTime()" name="min">
+                    </div>
+                    <button class="w3-button w3-red w3-col s1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                </div>
+            </div>
+                {{/unless}}
+                {{#each dt}}
+            <div d-data name="dt">
+                <div class="w3-row">
+                    <div class="w3-col s8 w3-padding">
+                        <input class="w3-input" type="text" name="reason" value="{{reason}}">
+                    </div>
+                    <div class="w3-col s3 w3-padding">
+                        <input class="w3-input" type="number" onchange="updateTotalTime()" name="min" value="{{min}}">
+                    </div>
+                    <button class="w3-button w3-red w3-col s1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                </div>
+            </div>
+                {{/each}}
+            <button class="w3-button w3-yellow" onclick="dData.add('dt',this);">Add Down Time Reason</button>
+        </div>
+    </div> <!-- ================  END CARD 4  ============== -->
+    <div class="w3-row w3-card w3-margin maintenance" d-data name="quarantine"> <!-- ================  CARD 5  ============== -->
+        <div class="w3-container w3-orange">
+            <h4>Quarantined Parts</h4>
+        </div>
+        <div class="w3-half w3-padding">
+            <div class="w3-row">
+                <label class="w3-threequarter">Reason</label>
+                <label class="w3-quarter">Quantity</label>
+            </div>
+                {{#unless quarantine.[0].qlist}}
+            <div d-data name="qlist">
+                <div class="w3-row">
+                    <div class="w3-col s8 w3-padding">
+                        <input class="w3-input" type="text" name="reason">
+                    </div>
+                    <div class="w3-col s3 w3-padding">
+                        <input class="w3-input" type="number" name="qty">
+                    </div>
+                    <button class="w3-button w3-red w3-col s1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                </div>
+            </div>
+                {{/unless}}
+                {{#each quarantine.[0].qlist}}
+            <div d-data name="qlist">
+                <div class="w3-row">
+                    <div class="w3-col s8 w3-padding">
+                        <input class="w3-input" type="text" name="reason" value="{{reason}}">
+                    </div>
+                    <div class="w3-col s3 w3-padding">
+                        <input class="w3-input" type="number" onchange="updateTotalTime()" name="qty" value="{{qty}}">
+                    </div>
+                    <button class="w3-button w3-red w3-col s1" onclick="dData.remove(this);" tabindex="-1">X</button>
+                </div>
+            </div>
+                {{/each}}
+            <button class="w3-button w3-yellow" onclick="dData.add('qlist',this);">Add Quarantine Reason</button>
+        </div>
+        <div class="w3-half w3-padding">
+            <label>Quarantine Notes:</label>
+            <textarea name="qnotes" style="width: 100%;">{{quarantine.[0].qnotes}}</textarea>
+        </div>
+    </div> <!-- ================  END CARD 5  ============== -->
+</form>
+{{/with}}
+<button onclick="showRev()" class="w3-button w3-block w3-blue">Revisions History</button>
+<div id="revHist" class="w3-hide">
+    {{#each revisions}}
+    <div class="w3-row w3-card w3-padding">
+        <div class="w3-quarter">
+            <h3><b><u>Revision</u>: {{rev}}</b></h3>
+            <p><b><u>Date</u>:</b> {{modified}}</p>
+            <p><b><u>Modified By</u>:</b> {{modifiedBy}}</p>
+        </div>
+        <div class="w3-threequarter">
+            <table class="w3-table-all">
+                <thead>
+                    <tr class="w3-gray">
+                        <th>Field</th>
+                        <th>New Value</th>
+                        <th>Old Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {{#each auditLog.[0].changes}}
+                    <tr>
+                        <td>{{key}}</td>
+                        <td>{{newVal}}</td>
+                        <td>{{oldVal}}</td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+<script>
+    window.socket = io("wss://websockets.mmpmg.com/productionReport");  {{!-- [[[]]] SOCKET Define Workspace [[[]]] --}}
+
+    var ts = document.getElementById("totalScrap");
+    var idEl = document.getElementById("idEl");
+    var goodParts = document.getElementById("goodParts");
+    var scrapPercent = document.getElementById("scrapPercent");
+    var sTime = document.querySelector("[name='sTime']");
+    var eTime = document.querySelector("[name='eTime']");
+    var totalTime = document.getElementById("totalTime");
+    var oee = document.getElementById("oee");
+    var dtElmsArr = document.querySelectorAll("[name='min']");
+
+    function oeeCalc() { // Calculate OEE
+        // Actual Up Time / Goal Time  x  Actual Rate / Normal Rate  x  Actual Good Parts / Goal Good Parts
+        
+        return "100% - TEST";
+    }
+
+    function sumScrap() {
+        var scrapArr = document.querySelectorAll("[name='qty']");
+        var newTotal = 0;
+        for(var i=0; i<scrapArr.length; i++) {
+            newTotal += parseInt(scrapArr[i].value);
+        }
+        ts.value = newTotal;
+
+        var totalCount = parseInt(newTotal) + parseInt(goodParts.value);
+        console.log(totalCount);
+        var scrapPercentage = Math.round((newTotal / totalCount * 100)*100)/100; // Round to two decimal places
+        var scrapPercentString = scrapPercentage + "%";
+        scrapPercent.value = scrapPercentString;
+    }
+
+    sumScrap();  // Call upon page load
+
+    function submitForm() {  // Trigger dData Save Function
+        if(!idEl.value) { // If not ID is set then assign a new one via the current date string
+            idEl.value = new Date().toISOString();
+            socket.emit("ws message", {"newDoc":true, "docUpdated":false, "deleted":false, "id":idEl.value} );  {{!-- [[[]]] SOCKET EMIT [[[]]] --}}
+        } else {
+            socket.emit("ws message", {"newDoc":false, "docUpdated":true, "deleted":false, "id":idEl.value} );  {{!-- [[[]]] SOCKET EMIT [[[]]] --}}
+        }
+        dData.save(idEl);
+    }
+
+    function updateTotalTime() {  // Calculate [End Time - Start Time - Down Time = Total Uptime]
+        var start = timeStringToMin(sTime.value ? sTime.value : "00:00");
+        var end = timeStringToMin(eTime.value ? eTime.value : "00:00");
+        var totalDT = 0;
+
+        for(var i=0; i<dtElmsArr.length; i++) {
+            var numToAdd = dtElmsArr[i].value ? parseInt(dtElmsArr[i].value) : 0;
+            totalDT = totalDT + numToAdd;
+        }
+
+        if(start>end) {
+            totalTime.value="ERROR: Start Time needs to be less than End Time.";
+        }else {
+            var diff = end - start - totalDT;
+            var hr = Math.floor(diff/60);
+            var min = (diff - (hr*60));
+            totalTime.value = hr + ":" + min.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+        }
+    }
+
+    updateTotalTime();  // Call upon page load
+
+    function timeStringToMin(timeString) {
+        var hoursMinutes = timeString.split(/[.:]/);
+        var hours = parseInt(hoursMinutes[0], 10);
+        var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+        return hours*60 + minutes;
+    }
+
+    function showRev() {  // To Hide/Unhide the Revision list at the bottom of the page
+        var el = document.getElementById("revHist");
+        if (el.className.indexOf("w3-show") == -1) {
+            el.className = el.className.replace("w3-hide", "w3-show");
+        } else {
+            el.className = el.className.replace("w3-show", "w3-hide");
+        }
+    }
+
+    function backToPrevious() {
+        var vars = {};
+        var urlVars = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+
+        if(vars["from"]) { location.href = vars["from"]; }
+        else { location.href = "/Production/Reports/List"; }
+    }
+
+    function hideShow() {
+        var el = document.querySelector('[name="operation"]');
+
+        if(el.value=="Maintenance") {
+            var elToHide = document.getElementsByClassName("maintenance");
+
+            for(var i=0; i<elToHide.length; i++) {
+                elToHide[i].style.display = "none";
+            }
+        } else {
+            var elToHide = document.getElementsByClassName("maintenance");
+
+            for(var i=0; i<elToHide.length; i++) {
+                elToHide[i].style.display = "block";
+            }
+        }
+    }
+
+    hideShow();
+
+</script>
+
+    {{/db_query}}
+
+{{/if}}

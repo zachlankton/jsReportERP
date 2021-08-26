@@ -1,0 +1,18 @@
+{
+    "shortid": "7B0b2_rnuu",
+    "name": "main-wrapper",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1602106881622
+    },
+    "modificationDate": {
+        "$$date": 1603427012816
+    },
+    "_id": "34gj7QdWv912EKHq",
+    "$entitySet": "templates",
+    "scripts": []
+}

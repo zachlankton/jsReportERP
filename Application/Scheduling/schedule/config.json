@@ -1,0 +1,18 @@
+{
+    "name": "schedule",
+    "recipe": "html",
+    "shortid": "xwwPPlIUq-",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true,
+        "waitForJS": false
+    },
+    "creationDate": {
+        "$$date": 1613137985389
+    },
+    "modificationDate": {
+        "$$date": 1615210971652
+    },
+    "_id": "g6eSOTppiYbteHsP",
+    "$entitySet": "templates"
+}

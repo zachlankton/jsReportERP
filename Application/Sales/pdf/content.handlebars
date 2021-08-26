@@ -1,0 +1,177 @@
+
+
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: sans-serif; background-color:transparent; }
+
+{#asset /Application/Assets/Styles/w3.css}
+
+tr > td, tr > th{
+    padding: 10px;
+    text-align:left;
+    vertical-align: top;
+}
+
+tr.bd-top > td {border-top: 1px solid;}
+
+caption.first {
+    caption-side: top;
+    prince-caption-page: first;
+}
+caption.following {
+    caption-side: top;
+    prince-caption-page: following;
+}
+
+caption {
+    border-top: 1px solid;
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    padding: 3px;
+}
+
+body {
+counter-reset: page 1;
+page: main;
+}
+
+.page-counter { 
+    content: "Page " counter(page) " of " counter(pages) 
+}
+
+
+@page {
+
+    margin: 2.25in 0.25in 0.25in 0.25in;
+
+    @top-left {
+        content: flow(header);
+        vertical-align: bottom;
+    }
+}
+
+header {flow: static(header)}
+
+</style>
+
+
+{{#if user.isAuthenticated}}
+{{#ifHasRole "Sales"}}
+    {{#db_query 
+    "salesOrder"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/Sales/((query.docid))'
+    "
+    }}
+    
+    {{toJSON salesOrder}}
+    
+    {{#with salesOrder.[0]}}
+    
+    <header>
+        <div class="w3-tiny w3-padding" style="display:table; width:100%;">
+            <div class="" style="display:table-cell; vertical-align:bottom; width:30%;">
+                <img src="{#asset /Application/Assets/images/mmpLogo.png @encoding=dataURI}" style="height: 70px;">
+                <br>Molded Magnesium Products, LLC.
+                <br>2336 East High Street
+                <br>Jackson Michigan 49203
+                <br>1-888-481-9512
+            </div>
+            <div  style="text-align: center; vertical-align:bottom; display: table-cell">
+                <h5>Sales Order</h5>
+            </div>
+            <div class="" style="width:30%; display:table-cell; vertical-align: bottom;">
+                <div class="" style=" border:solid 1px; vertical-align:bottom; border-radius:7px; text-align:center;">
+                    <div class="w3-block w3-padding-small" style="border-bottom: 1px solid;">Quote Ref:</div>
+                    <strong class="w3-block w3-padding-small" style="border-bottom: 1px solid">{{quoteNo}}</strong>
+
+                    <div class="w3-padding">
+                        <div class="w3-block">{{contact}}</div>
+                        <div class="w3-block">bill@mmpmg.com</div>
+                        <div class="w3-block">Cell: 248-330-9040</div>
+                    </div>
+
+                    <div class="page-counter w3-padding-small" style="border-top: 1px solid;">test</div>
+                        
+                </div>
+            </div>
+        </div>
+        
+    </header>
+
+
+
+        <div class="" style="display: table; width:100%; border-spacing: 25px;">
+            <div class="w3-border w3-border-black w3-round w3-padding-small w3-small" style="display: table-cell; width:45%">
+                    <h5 class="w3-border-bottom">Quote To:</h5>
+                    <address style="white-space:pre-line">{{address}}</address>
+            </div>
+            <div class="w3-border-black w3-border w3-round w3-padding-small w3-small" style="display: table-cell; width:45%">
+                <h5 class="w3-border-bottom">Quote Info:</h5>
+                <address style="white-space:pre-line">
+                    Quote Date: {{quoteDate}}
+                    Quote Expires: {{expireDate}}
+                    Representative: {{representative}}
+                    Terms: {{terms}}
+                    FOB: {{FOB}}
+                </address>
+            </div>
+        </div>
+
+        <div class="w3-padding">
+            <table class="w3-round-large w3-border w3-border-black w3-section" style="width:100%; border-spacing: 0px;">
+                <thead>
+                    <tr class="w3-left-align w3-border-black">
+                        <th style="width:10%; text-align:left">Line</th>
+                        <th style="width:20%">Part</th>
+                        <th style="width:40%">Description</th>
+                        <th style="width:30%">Price / Breaks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each LineItems}}
+                    <tr class="bd-top w3-tiny w3-border-black" style="page-break-inside:avoid; text-align:left">
+                        <td>{{lineNo @index}}</td>
+                        <td>{{partNo}} <br> {{partDesc}} </td>
+                        <td>{{quoteDesc}}</td>
+                        <td>
+                            {{#each PriceBreaks}}
+                                <span class="w3-block">{{quantity}} @ ${{price}}  {{unit}}</span>
+                            {{/each}}
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="w3-padding">
+            <table class="w3-border-black w3-border w3-section" style="width:100%; border-spacing: 0px; border-bottom-left-radius: 7px; border-bottom-right-radius: 7px;">
+                
+                <caption class="first">Notes</caption>
+                <caption class="following">Notes - continued</caption>
+                   
+                
+                    <tr>
+                        <td style="white-space: pre-line;">{{notes}}</td>
+                    </tr>
+                
+            </table>
+            
+        </div>
+    
+    {{/with}}
+    {{/db_query}}
+    
+{{else}}
+
+    <h4>You do Not have permission to view this resource</h4>
+
+{{/ifHasRole}}
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    {#child /Application/login}
+{{/if}}

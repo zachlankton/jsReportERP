@@ -1,0 +1,524 @@
+
+{{#if user.isAuthenticated}}
+{{#ifHasRole "Scheduling"}}
+    {{#ifHasRole "ScheduleWriter"}}
+        {{use_save_handler_for_db "/Schedule"}}
+    {{/ifHasRole}}
+    {{#db_query 
+    "schedule"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/Schedule/((query.docid))'
+    "
+    }}
+
+<head>
+    <script src="{#asset Application/Assets/Scripts/socket.io.js @encoding=link}" /></script>
+    <script src="{#asset Application/Assets/Scripts/sortable.js @encoding=link}" /></script> 
+    <script src="{#asset Application/Assets/Scripts/frappe-gantt.js @encoding=link}" /></script>
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/frappe-gantt.css @encoding=link}" />
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/w3.css @encoding=link}" />
+
+    <style>
+        #mdl_notes {
+            resize:none;
+            height: 300px;
+        }
+
+        #modal {
+            padding-top: 50px;
+        }
+
+        #print_button {
+            position: fixed;
+            top: 0px;
+            right: 0px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <header class="w3-row">
+        <div class="w3-third">
+            <h5>mmp Simple Scheduler</h5>
+            <button id="print_button" onclick="print_schedule()" class="w3-btn w3-blue">Print</button>
+        </div>
+        
+        <p id="saved" class="w3-green w3-third w3-center w3-animate-opacity-hide"> Saved </p>
+        <p class="w3-third w3-center">Double Click to Add or Modify. <br> Click and Drag Enabled</p>
+    </header>
+    
+    <svg id="gantt"></svg>
+        
+    <div id="modal" class="w3-modal">
+        <div class="w3-modal-content w3-card-4">
+            <header class="w3-container w3-theme"> 
+                <span onclick="hideModal()" 
+                class="w3-button w3-display-topright">&times;</span>
+                <h5>Edit Item</h5>
+            </header>
+            <div class="w3-container" id="modal_form">
+                <div class="w3-row">
+                    <div class="w3-third w3-container">
+                        <p>
+                            <label>Title / Part No</label>
+                            <input id="mdl_title" class="w3-input" tabindex="1" />
+                            <input id="mdl_id" class="w3=input" type="hidden" />
+                        </p>
+                        <p>
+                            <label>Target Qty</label>
+                            <input type="number" class="w3-input" id="mdl_target_qty" tabindex="4"/>
+                        </p>
+                        
+                        <p>
+                            <label>Material</label>
+                            <select id="mdl_material" class="w3-input" tabindex="7">
+                                <option></option>
+                                <option>AZ-91D</option>
+                                <option>AM-60B</option>
+                            </select>
+                            <input id="mdl_row" class="w3-input" type="hidden"/>
+                            <input id="mdl_progress" class="w3-input" type="hidden"/>
+                        </p>
+                        
+                    </div>
+                    
+                    <div class="w3-third w3-container">
+                        <p>
+                            <label>Start Date:</label>
+                            <input type="datetime-local" id="mdl_start" class="w3-input" tabindex="2" />
+                        </p>
+                        
+                        <p>
+                            <label>Good Qty</label>
+                            <input type="number" class="w3-input" id="mdl_good_qty" tabindex="5"/>
+                        </p>
+                        <p>
+                            <label>Order Ref</label>
+                            <input id="mdl_order_ref" class="w3-input" tabindex="8"/>
+                        </p>
+
+                       
+                    </div>
+                    
+                    <div class="w3-third w3-container">
+                        <p>
+                            <label>End Date:</label>
+                            <input type="datetime-local" id="mdl_end" class="w3-input" tabindex="3"/>
+                        </p>
+                        
+                        <p>
+                            <label>Scrap Qty</label>
+                            <input type="number" class="w3-input" id="mdl_scrap_qty" tabindex="6"/>
+                        </p>
+
+                         <p>
+                            <label>Bar Color</label>
+                            <select id="mdl_bar_color" class="w3-input bg-gray" onchange="updateColor(this)"  tabindex="9">
+                                <option class="bg-navy aqua">Navy</option>
+                                <option class="bg-blue aqua">Blue</option>
+                                <option class="bg-aqua">Aqua</option>
+                                <option class="bg-teal">Teal</option>
+                                <option class="bg-olive">Olive</option>
+                                <option class="bg-green">Green</option>
+                                <option class="bg-lime">Lime</option>
+                                <option class="bg-yellow">Yellow</option>
+                                <option class="bg-orange">Orange</option>
+                                <option class="bg-red">Red</option>
+                                <option class="bg-maroon silver">Maroon</option>
+                                <option class="bg-fuchsia">Fuchsia</option>
+                                <option class="bg-purple silver">Purple</option>
+                                <option class="bg-black silver">Black</option>
+                                <option selected class="bg-gray">Gray</option>
+                                <option class="bg-silver">Silver</option>
+                            </select>
+                        </p>
+                    </div>
+                </div>
+                <div class="w3-row">
+                    <p>
+                        <label>Notes</label>
+                        <textarea class="w3-input" id="mdl_notes"></textarea>
+                    </p>
+                    
+                </div>
+            </div>
+            <footer class="w3-container w3-padding-small w3-center w3-row-padding">
+                <div class="w3-quarter">
+                    <button class="w3-btn w3-theme w3-block" onclick="addTask()">OK</button>
+                </div>
+                <div class="w3-quarter">
+                    <button class="w3-btn w3-blue-grey w3-block" onclick="hideModal()">Cancel</button>
+                </div>
+                <div class="w3-quarter">
+                    <button class="w3-btn w3-light-blue w3-block" onclick="clearModal()">Clear</button>
+                </div>
+                <div class="w3-quarter">
+                    <button id="mdl_delete" class="w3-btn w3-red w3-block" onclick="deleteTask()">DELETE</button>
+                </div>
+                
+                
+            </footer>
+        </div>
+  </div>
+</body>
+
+
+<script>
+
+    window.socketMessageJustSent = false;
+
+    window.socket = io("wss://websockets.mmpmg.com/scheduling");
+
+    socket.on("ws message", function(msg){
+        if (msg == "schedule saved" && !window.socketMessageJustSent){
+            if (msg.by == user.email) return 0;
+            location.reload();
+        }
+        
+        if (msg.being_edited && !window.socketMessageJustSent){
+            alertBeingEdited(msg);
+        }
+
+        window.socketMessageJustSent = false;
+        
+    })
+
+    function emitEditingEvent(){
+        if (window.socketMessageJustSent) return;
+        window.socketMessageJustSent = true;
+        socket.emit("ws message", {being_edited: true, by: user.email} );
+    }
+
+    function alertBeingEdited(msg){
+        saved_msg.classList.remove("w3-red");
+        saved_msg.classList.add("w3-yellow");
+        saved_msg.classList.remove("w3-green");
+        saved_msg.classList.remove("w3-animate-opacity-hide");
+        saved_msg.innerHTML = `${msg.by} is currently making changes` ;
+        setTimeout(function(){ 
+            saved_msg.classList.add("w3-animate-opacity-hide"); 
+        }, 2000)
+    }
+
+    var query = {{toJSON query}} ;
+
+    var user = {{toJSON user}} ;
+
+    var schedule = {{toJSON schedule.[0]}} ;
+
+    var saved_msg = document.getElementById("saved")
+    
+    var mdl_form = document.getElementById("modal_form")
+    var mdl_delete = document.getElementById("mdl_delete");
+    var mdl_id = document.getElementById("mdl_id");
+    var mdl_title = document.getElementById("mdl_title");
+    var mdl_row = document.getElementById("mdl_row");
+    var mdl_start = document.getElementById("mdl_start");
+    var mdl_end = document.getElementById("mdl_end");
+    var mdl_bar_color = document.getElementById("mdl_bar_color");
+    var mdl_order_ref = document.getElementById("mdl_order_ref");
+    var mdl_progress = document.getElementById("mdl_progress");
+    var mdl_target_qty = document.getElementById("mdl_target_qty");
+    var mdl_good_qty = document.getElementById("mdl_good_qty");
+    var mdl_scrap_qty = document.getElementById("mdl_scrap_qty");
+    var mdl_material = document.getElementById("mdl_material");
+    var mdl_notes = document.getElementById("mdl_notes");
+
+    mdl_form.addEventListener("keyup", function(ev){
+        if (ev.key == "Enter"  && ev.target != mdl_notes){
+            addTask();
+        }
+    })
+
+    function clearModal(){
+        mdl_id.value = "";
+        mdl_title.value = "";
+        mdl_bar_color.value = "Gray";
+        mdl_notes.value = "";
+        mdl_order_ref.value = "";
+        mdl_material.value = "";
+        mdl_progress.value = "";
+        mdl_target_qty.value = "";
+        mdl_good_qty.value = "";
+        mdl_scrap_qty.value = "";
+        updateColor(mdl_bar_color)
+    }
+
+    function showModal(data){
+        if (data.row == undefined) return 0;
+        if (data.id){
+            mdl_id.value = data.id;
+            mdl_title.value = data.name;
+            mdl_bar_color.value   = data.bar_color;
+            mdl_row.value = data.row;
+            mdl_notes.value = data.notes || "";
+            mdl_order_ref.value = data.order_ref || "";
+            mdl_start.value = fixDateBecauseBrowsersDontDoThisAutomatically(data.start);
+            mdl_end.value = fixDateBecauseBrowsersDontDoThisAutomatically(data.end);
+            mdl_material.value = data.material || "";
+            mdl_progress.value = data.progress || "";
+            mdl_target_qty.value = data.target_qty;
+            mdl_good_qty.value = data.good_qty;
+            mdl_scrap_qty.value = data.scrap_qty;
+        }else{
+            mdl_id.value = data.id || "";
+            mdl_start.value = fixDateBecauseBrowsersDontDoThisAutomatically(data.start);
+            mdl_end.value = fixDateBecauseBrowsersDontDoThisAutomatically(data.end);
+            mdl_row.value = data.row;
+        }
+        
+
+        updateColor(mdl_bar_color);
+        document.getElementById('modal').style.display='block';
+        if (mdl_id.value){ 
+            mdl_delete.disabled = false; 
+        }else{
+            mdl_delete.disabled = true;
+        }
+    }
+
+    function hideModal(){
+        document.getElementById('modal').style.display='none'
+    }
+
+    function updateColor(elm){
+        const idx = elm.selectedIndex;
+        const optClass = elm.children[idx].getAttribute("class");
+        elm.setAttribute("class", "w3-input " + optClass);
+    }
+
+    function addTask(){
+        var target_txt = "";
+        if (mdl_target_qty.value && mdl_target_qty.value != "0"){
+            target_txt = `Target: ${mdl_target_qty.value}`
+        }
+        const target = parseInt(mdl_target_qty.value);
+        const good = parseInt(mdl_good_qty.value);
+        const scrap = parseInt(mdl_scrap_qty.value);
+        const total = good + scrap;
+        const progress = Math.min(100, good / target * 100);
+        var task = {
+            id: mdl_id.value,
+            row: mdl_row.value,
+            name: mdl_title.value,
+            start: new Date(mdl_start.value).toISOString(),
+            end: new Date(mdl_end.value).toISOString(),
+            custom_class: getCustomClass(),
+            bar_color: mdl_bar_color.value,
+            order_ref: mdl_order_ref.value,
+            progress,
+            material: mdl_material.value,
+            target_qty: mdl_target_qty.value || "0",
+            good_qty: mdl_good_qty.value || "0",
+            scrap_qty: mdl_scrap_qty.value || "0",
+            notes: mdl_notes.value,
+            text: [
+                "",
+                mdl_material.value,
+                target_txt
+            ]
+        }
+        if (task.id){
+            const task_index = gantt.tasks.indexOf(gantt.get_task(task.id));
+            gantt.tasks[task_index] = task;
+        }else{
+            gantt.tasks.push(task);
+        }
+        gantt.refresh(gantt.tasks);
+        hideModal();
+    }
+
+    function deleteTask(){
+        const id = mdl_id.value;
+        if (id){
+            const task_index = gantt.tasks.indexOf(gantt.get_task(id));
+            gantt.tasks.splice(task_index, 1);
+            gantt.refresh(gantt.tasks);
+            hideModal();
+        }
+    }
+
+    // function loadTasks(tasks){
+    //     gantt.tasks = JSON.parse(tasks);
+    //     gantt.refresh(gantt.tasks);
+    // }
+
+    async function saveTasks(){
+        const tasks = gantt.tasks;
+        const sched = {
+            rev: schedule.rev,
+            rowLabels: gantt.options.rowLabels,
+            tasks,
+            _docChangeLog: []
+        }
+
+        try {
+            var results = await post(location.pathname + location.search + "&nowrap", sched);
+            var res = JSON.parse(results);
+
+            if (res.insert.meta.status == "success"){
+                schedule.rev += 1;
+                saved_msg.classList.remove("w3-red");
+                saved_msg.classList.remove("w3-yellow");
+                saved_msg.classList.add("w3-green");
+                saved_msg.classList.remove("w3-animate-opacity-hide");
+                saved_msg.innerHTML = " Successfullly Saved ";
+                window.socketMessageJustSent = true;
+                socket.emit("ws message", "schedule saved")
+                setTimeout(function(){ 
+                    saved_msg.classList.add("w3-animate-opacity-hide"); 
+                }, 2000)
+            }else{
+                saved_msg.classList.remove("w3-green");
+                saved_msg.classList.remove("w3-yellow");
+                saved_msg.classList.add("w3-red");
+                saved_msg.classList.remove("w3-animate-opacity-hide");
+                alert("ERROR Saving! Check Console!!");
+                saved_msg.innerHTML = " Error Saving - Check Console! ";
+                console.log(res);
+            }
+        }catch(e){
+            console.log(e);
+            alert("ERROR SAVING!!")
+        }
+        
+        
+    }
+
+    
+
+    const customBarClassIndex = {
+        "Navy":     "fill-navy text-aqua",
+        "Blue":     "fill-blue text-aqua",
+        "Aqua":     "fill-aqua text-black",
+        "Teal":     "fill-teal text-black",
+        "Olive":    "fill-olive",
+        "Green":    "fill-green",
+        "Lime":     "fill-lime text-black",
+        "Yellow":   "fill-yellow text-black",
+        "Orange":   "fill-orange",
+        "Red":      "fill-red",
+        "Maroon":   "fill-maroon text-silver",
+        "Fuchsia":  "fill-fuchsia",
+        "Purple":   "fill-purple text-silver",
+        "Black":    "fill-black text-silver",
+        "Gray":     "fill-gray text-black",
+        "Silver":   "fill-silver text-black"
+    }
+
+    const customProgressClassIndex = {
+        "Navy":     " progress-navy",
+        "Blue":     " progress-blue",
+        "Aqua":     " progress-aqua",
+        "Teal":     " progress-teal",
+        "Olive":    " progress-olive",
+        "Green":    " progress-green",
+        "Lime":     " progress-lime",
+        "Yellow":   " progress-yellow",
+        "Orange":   " progress-orange",
+        "Red":      " progress-red",
+        "Maroon":   " progress-maroon",
+        "Fuchsia":  " progress-fuchsia",
+        "Purple":   " progress-purple",
+        "Black":    " progress-black",
+        "Gray":     " progress-gray",
+        "Silver":   " progress-silver"
+    }
+
+    const customScrapClassIndex = {
+        "Navy":     " scrap-navy",
+        "Blue":     " scrap-blue",
+        "Aqua":     " scrap-aqua",
+        "Teal":     " scrap-teal",
+        "Olive":    " scrap-olive",
+        "Green":    " scrap-green",
+        "Lime":     " scrap-lime",
+        "Yellow":   " scrap-yellow",
+        "Orange":   " scrap-orange",
+        "Red":      " scrap-red",
+        "Maroon":   " scrap-maroon",
+        "Fuchsia":  " scrap-fuchsia",
+        "Purple":   " scrap-purple",
+        "Black":    " scrap-black",
+        "Gray":     " scrap-gray",
+        "Silver":   " scrap-silver"
+    }
+
+    function getCustomClass(){
+        const classKeys = Object.keys(customBarClassIndex);
+        
+        const barColor = mdl_bar_color.value;
+        const classIndex = classKeys.indexOf(barColor);
+
+        let progIndex = classIndex + 5;
+        let scrapIndex = classIndex + 10;
+        if (progIndex > 15) progIndex -= 16;
+        if (scrapIndex > 15) scrapIndex -= 16;
+        
+        const progColor = classKeys[progIndex];
+        const scrapColor = classKeys[scrapIndex];
+        
+        return customBarClassIndex[barColor] + customProgressClassIndex[progColor] + customScrapClassIndex[scrapColor];
+    }
+
+    // soooo fucking annoying....
+    function fixDateBecauseBrowsersDontDoThisAutomatically(d){
+        return new Date(d).toLocaleString("sv-SE", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        }).replace(" ", "T");
+    }
+
+    function print_schedule(){
+        const viewMode = `zoom=${gantt.options.view_mode}`;
+        const scrollLeft = `scrollLeft=${gantt.scroll_pos}`;
+        const docid = `docid=${query.docid}`;
+        const url = `/Scheduling/schedule_print?${docid}&${viewMode}&${scrollLeft}`;
+        window.open(url);
+    }
+
+    var rowLabels = ["Theresa", "Lazarus", "Jessica", "Ariel", "Johnny 5"]
+
+    var tasks = schedule.tasks || [];
+
+    var gantt = new Gantt("#gantt", tasks, {
+        header_height: 50,
+        column_width: 30,
+        rowLabels: schedule.rowLabels || [],
+        step: 24*7,
+        view_modes: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month', 'Year'],
+        bar_height: 50,
+        lines_of_text: 3,
+        bar_corner_radius: 3,
+        arrow_curve: 5,
+        padding: 16,
+        view_mode:  query.zoom || 'Day',
+        scrollLeft: query.scrollLeft || undefined,  
+        date_format: 'YYYY-MM-DD',
+        custom_popup_html: null
+    });
+
+    query.scrollLeft = undefined;
+
+   
+</script>
+    {{/db_query}}
+
+{{else}}
+
+    <h4>You do Not have permission to view this resource</h4>
+
+{{/ifHasRole}}
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    {#child /Application/login}
+{{/if}}
+

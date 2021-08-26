@@ -1,0 +1,22 @@
+{
+    "shortid": "PgkjWLpHSx",
+    "name": "index",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1602039117497
+    },
+    "modificationDate": {
+        "$$date": 1615240481889
+    },
+    "_id": "SuksNd96PTvxHN1R",
+    "$entitySet": "templates",
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ]
+}

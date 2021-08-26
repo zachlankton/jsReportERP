@@ -1,0 +1,48 @@
+
+{{#if user.isAuthenticated}}
+{{#ifHasRole "Sales"}}
+    
+    {{use_delete_handler_for_db "/Customers"}}
+
+    {{#db_query}}
+    <div class="w3-panel w3-red">
+        <h3>Danger!</h3>
+        <p>Are you sure you want to delete this document?</p>
+    </div> 
+
+    <button class="w3-btn w3-green w3-large" onclick="history.back()">Go Back To Safety</button>
+    <button class="w3-btn w3-red w3-large" onclick="delete_doc()">DELETE</button>
+
+    <script>
+        async function delete_doc(){
+            try {
+                var results = await post(location.pathname + 
+                                        location.search + "&nowrap");
+                results = JSON.parse(results);
+                if (results.results.meta.status == "success"){
+                    location.href = "/Customers/list"
+                } else {
+                    alert ("Error: Was not able to delete!");
+                    console.log(results);
+                }
+            }catch(e){
+                alert("Error: Was not able to delete!")
+                console.log(e);
+            }
+            
+            
+        }
+    </script>
+    {{/db_query}}
+{{else}}
+
+    <h4>You do Not have permission to view this resource</h4>
+
+{{/ifHasRole}}
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    
+    {#child /Application/login}
+{{/if}}

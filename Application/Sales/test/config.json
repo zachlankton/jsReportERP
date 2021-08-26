@@ -1,0 +1,20 @@
+{
+    "shortid": "rB_1cQqU4d",
+    "name": "test",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "docx": {
+        "templateAssetShortid": "74iD~G7"
+    },
+    "creationDate": {
+        "$$date": 1628711596690
+    },
+    "modificationDate": {
+        "$$date": 1628711804529
+    },
+    "_id": "Ms6JJQdxL1q4sqcp",
+    "$entitySet": "templates"
+}

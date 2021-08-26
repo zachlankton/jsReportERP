@@ -1,0 +1,251 @@
+
+{{#if user.isAuthenticated}}
+{{#ifHasRole "Sales"}}
+    {{#with query}}
+        {{defineSearch "search" ""}}
+    {{/with}}
+
+    {{getToday}}
+    {{getNextWeek}}
+    
+
+    {{#db_query 
+     "sales"
+    "   SELECT meta(mmp).id AS id, mmp.* FROM mmp
+        WHERE dbNamespace = '/Sales'
+        ((searchQuery)) 
+        ORDER BY modified DESC
+    "
+    
+    "late"
+    "   SELECT meta(mmp).id AS id, mmp.* FROM mmp
+        WHERE dbNamespace = '/Sales' AND quoteStatus = 'In Process'
+        AND SEARCH(mmp, 'dueDate:<((today))', {'index':'mmp_search_en'})
+        ORDER BY dueDate ASC
+    "
+
+    "due_this_week"
+    "   SELECT meta(mmp).id AS id, mmp.* FROM mmp
+        WHERE dbNamespace = '/Sales' AND quoteStatus = 'In Process'
+        AND SEARCH(mmp, '+dueDate:>=((today)) +dueDate:<((nextWeek))', {'index':'mmp_search_en'})
+        ORDER BY dueDate ASC
+    "
+    
+    "due_next_week"
+    "   SELECT meta(mmp).id AS id, mmp.* FROM mmp
+        WHERE dbNamespace = '/Sales' AND quoteStatus = 'In Process'
+        AND (SEARCH(mmp, 'dueDate:>=((nextWeek))', {'index':'mmp_search_en'})
+        OR dueDate = '')
+        ORDER BY dueDate ASC
+    "
+
+    
+
+    "not_acknowledged"
+    "   SELECT meta(mmp).id AS id, mmp.* FROM mmp
+        WHERE dbNamespace = '/Sales' AND quoteStatus = 'Submitted'
+        ORDER BY modified DESC LIMIT 5
+    "
+
+    "acknowledged"
+    "   SELECT meta(mmp).id AS id, mmp.* FROM mmp
+        WHERE dbNamespace = '/Sales' AND quoteStatus = 'Awarded'
+        ORDER BY modified DESC LIMIT 5
+    "
+
+
+    }}
+    {{!-- {{toJSON due_this_week}} --}}
+    <h4 class="w3-margin w3-padding-large w3-col m4">Sales Dashboard</h4>
+    <button class="w3-btn w3-green w3-right" onclick="location.href='/Sales/form?docid=new'">Create New Sales Order</button>
+    <div class="w3-row-padding w3-margin">
+
+        <div class="w3-col m4">
+            <strong >LATE SALES ORDERS!!!</strong>
+            <table class="w3-table-all">
+                <thead>
+                    <tr class="w3-red">
+                        <th>Sales No</th>
+                        <th>Customer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each late}}
+                    {{#if quoteNo}}
+                    <tr class="w3-hover-theme">
+                        <td {{clicker}}>{{quoteNo}}</td>
+                        <td {{clicker}}>{{customer}}</td>
+                    </tr>
+                    {{else}}
+                    <tr><td  colspan="2" class="w3-grey">Yay! No Late Orders!</td></tr>
+                    {{/if}}
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="w3-col m4">
+            <strong>Due Within 7 Days</strong>
+            <table class="w3-table-all">
+                <thead>
+                    <tr class="w3-yellow">
+                        <th>Sales No</th>
+                        <th>Customer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each due_this_week}}
+                    {{#if quoteNo}}
+                    <tr class="w3-hover-theme">
+                        <td {{clicker}}>{{quoteNo}}</td>
+                        <td {{clicker}}>{{customer}}</td>
+                    </tr>
+                    {{else}}
+                    <tr><td  colspan="2" class="w3-grey">No Orders Due This Week</td></tr>
+                    {{/if}}
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        
+
+        <div class="w3-col m4">
+            <strong>Due Later</strong>
+            <table  class="w3-table-all">
+                <thead>
+                    <tr class="w3-green">
+                        <th>Sales No</th>
+                        <th>Customer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each due_next_week}}
+                    {{#if quoteNo}}
+                    <tr class="w3-hover-theme">
+                        <td {{clicker}}>{{quoteNo}}</td>
+                        <td {{clicker}}>{{customer}}</td>
+                    </tr>
+                    {{else}}
+                    <tr><td  colspan="2" class="w3-grey">No Orders Due Later</td></tr>
+                    {{/if}}
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="w3-row-padding w3-margin">
+        <div class="w3-col m4">
+            <strong>NEW SALES ORDERS (NOT ACKNOWLEDGED)</strong>
+            <table  class="w3-table-all">
+                <thead>
+                    <tr class="w3-theme">
+                        <th>Quote No</th>
+                        <th>Customer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each not_acknowledged}}
+                    {{#if quoteNo}}
+                    <tr class="w3-hover-theme">
+                        <td {{clicker}}>{{quoteNo}}</td>
+                        <td {{clicker}}>{{customer}}</td>
+                    </tr>
+                    {{else}}
+                    <tr><td  colspan="2" class="w3-grey">No Unacknowledged Orders</td></tr>
+                    {{/if}}
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="w3-col m4">
+            <strong>NEW SALES ORDERS (ACKNOWLEDGED)</strong>
+            <table  class="w3-table-all">
+                <thead>
+                    <tr class="w3-theme">
+                        <th>Sales No</th>
+                        <th>Customer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each acknowledged}}
+                    {{#if quoteNo}}
+                    <tr class="w3-hover-theme">
+                        <td {{clicker}}>{{quoteNo}}</td>
+                        <td {{clicker}}>{{customer}}</td>
+                    </tr>
+                    {{else}}
+                    <tr><td colspan="2" class="w3-grey">No Recent Acknowledged Orders</td></tr>
+                    {{/if}}
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="w3-margin w3-padding-large"> &nbsp</div>
+
+    <div class="w3-row">
+        <column class="w3-col m2" >
+            <h4>Search All Sales</h4>
+        </column>
+        
+        <input class="w3-col m9 w3-input w3-border" 
+                name="search" type="search" placeholder="Search..." 
+                value="{{query.search}}" autofocus 
+                onfocus="this.select()" 
+                onsearch="location.search='search=' + encodeURIComponent(this.value)"/>    
+        
+    </div>
+
+    
+    <div class=" w3-col m11 w3-padding-large">
+        <p>
+            {{sales.dbQuery.meta.metrics.sortCount}} Results Returned in {{sales.dbQuery.meta.metrics.elapsedTime}}ms            
+        </p>
+        <table class="w3-table-all w3-margin">
+            <thead>
+                <tr class="w3-theme">
+                    <th>Sales No</th>
+                    <th>Customer</th>
+                    <th style="width:100px">Docstatus</th>
+                    <th style="width:100px">Last Due Date</th>
+                    <th style="width:100px"></th>
+                    <th style="width:100px"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each sales}}
+                <tr  class="w3-hover-theme" >
+                    <td {{clicker}}>{{docid}}</td>
+                    <td {{clicker}}>{{customer}}</td>
+                    <td {{clicker}}>{{docstatus}}</td>
+                    <td {{clicker}}>{{expireDate}}</td>
+                    <td class="w3-center"><a href="{{pdf docid}}"><i class="w3-yellow far fa-file-pdf"></i></a></td>
+                    <td class="w3-center"><a href="{{del docid}}"><i class="w3-text-red far fa-trash-alt"></i></a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+            <tfoot></tfoot>
+        </table>
+    </div>
+        
+
+    {{/db_query}}
+
+{{else}}
+
+    <h4>You do Not have permission to view this resource</h4>
+
+{{/ifHasRole}}
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    
+    {#child /Application/login}
+{{/if}}

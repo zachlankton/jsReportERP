@@ -1,0 +1,33 @@
+<style>
+    .nested-menu {
+      position: relative;
+    }
+
+    .nested-menu>a{
+      padding-left: 30px;
+    }
+
+    .nested-menu:before {
+      box-shadow: inset 0px 22px 5px -20px rgba(0,0,0,1);
+      content: '';
+      display: block;
+      height: 5px;
+      position: absolute;
+      width: 100%;
+      top: 0px;
+    }
+
+    .nested-menu:after {
+      box-shadow: inset 0px -19px 5px -20px rgba(0,0,0,1);
+      content: '';
+      display: block;
+      height: 5px;
+      position: absolute;
+      width: 100%;
+      bottom: 0px;
+    }
+
+    .nested-menu>.w3-btn {
+      background-color: unset;
+    }
+</style>

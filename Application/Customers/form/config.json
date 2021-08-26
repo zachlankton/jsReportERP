@@ -1,0 +1,24 @@
+{
+    "name": "form",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1603331063140
+    },
+    "modificationDate": {
+        "$$date": 1603425072380
+    },
+    "inheritedReadPermissions": [],
+    "inheritedEditPermissions": [],
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ],
+    "shortid": "UwljaOc",
+    "_id": "4f6XwZT4NX0ynITP",
+    "$entitySet": "templates"
+}

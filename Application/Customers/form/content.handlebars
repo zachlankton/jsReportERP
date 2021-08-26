@@ -1,0 +1,70 @@
+
+
+{{#if user.isAuthenticated}}
+{{#ifHasRole "Sales"}}
+    
+    {{use_save_handler_for_db "/Customers"}}
+
+    {{#db_query 
+    "salesOrder"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/Customers/((query.docid))'
+    "
+    }}          
+
+        {{#with salesOrder.[0]}}
+        <form style="" class="" d-data name="quoteForm" onsubmit="return false" autocomplete="off">
+            {{#row}}
+                
+                <div class="w3-col" style="max-width:725px;">
+                    <h1 w3-center>Customer</h1>
+                    {{#row "w3-row-padding"}}
+                        {{#col "m12"}}
+                            {{input "Customer Name" "name"}}
+                        {{/col}}
+                        {{#col "m6"}}
+                            {{#dDataEach "contacts" "Add Contact"}}
+                                {{input "Name" "name"}}
+                                {{input "Email" "email"}}
+                                {{input "Mobile" "mobile"}}
+                                {{removeBtn}}
+                                <hr class="w3-border-theme">
+                            {{/dDataEach}}
+                        {{/col}}
+                        {{#col "m6"}}
+                            {{#dDataEach "addresses" "Add Address"}}
+                                {{textarea "Address" "address"}}
+                                {{removeBtn}}
+                                <hr class="w3-border-theme">
+                            {{/dDataEach}}
+                        {{/col}}
+                    
+                    {{/row}}
+                </div>
+            
+                {#child /Components/doc_side_bar @data.baseURL=/Customers @data.docSideBar$={{{childTemplateSerializeData this}}} }
+                {{fix_jsreport_child_template_percent_sign_bug}}
+            {{/row}}
+            {#child /Components/audit_log @data.auditLog$={{{childTemplateSerializeData this}}} }
+            {{fix_jsreport_child_template_percent_sign_bug}}
+        </form>
+        {{!-- end d-data div --}}
+
+        {{/with}}
+
+       
+
+    {{/db_query}}
+
+{{else}}
+
+    <h4>You do Not have permission to view this resource</h4>
+
+{{/ifHasRole}}
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    
+    {#child /Application/login}
+{{/if}}

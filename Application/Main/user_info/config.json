@@ -1,0 +1,17 @@
+{
+    "shortid": "J83lNde0Vd",
+    "name": "user_info",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1602127189763
+    },
+    "modificationDate": {
+        "$$date": 1602610951673
+    },
+    "_id": "Wf4qNIBOKz0fRjcL",
+    "$entitySet": "templates"
+}

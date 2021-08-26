@@ -1,0 +1,18 @@
+{
+    "shortid": "CKZqPoD5Gw",
+    "name": "login",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1602609753545
+    },
+    "modificationDate": {
+        "$$date": 1602958046857
+    },
+    "_id": "PPWgszjvfzb2iBgM",
+    "$entitySet": "templates",
+    "pdfMeta": null
+}

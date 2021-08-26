@@ -1,0 +1,17 @@
+{
+    "shortid": "WWtkgHYx-G",
+    "name": "doc_side_bar",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1603415631837
+    },
+    "modificationDate": {
+        "$$date": 1620400685314
+    },
+    "_id": "QGl6rf0dNZe0gfm5",
+    "$entitySet": "templates"
+}

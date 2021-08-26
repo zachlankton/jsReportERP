@@ -1,0 +1,22 @@
+{
+    "name": "WeekDisp",
+    "recipe": "html",
+    "shortid": "34sk-tBYKQ",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ],
+    "creationDate": {
+        "$$date": 1623787088840
+    },
+    "modificationDate": {
+        "$$date": 1624978880321
+    },
+    "_id": "Oz2ytrp6ajIGMc85",
+    "$entitySet": "templates"
+}

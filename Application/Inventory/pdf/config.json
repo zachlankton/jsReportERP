@@ -1,0 +1,17 @@
+{
+    "name": "pdf",
+    "recipe": "PrincePDF",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1604088540620
+    },
+    "modificationDate": {
+        "$$date": 1604088540620
+    },
+    "shortid": "csJR6vM",
+    "_id": "twdQW8nRh16GY3Uf",
+    "$entitySet": "templates"
+}

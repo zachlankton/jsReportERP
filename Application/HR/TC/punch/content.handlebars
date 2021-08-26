@@ -1,0 +1,96 @@
+{{#if user.isAuthenticated}}
+{{#ifHasRole "timeclock"}}
+
+{{use_save_handler_for_db "/Punches"}}
+{{#db_query
+    "empInfo"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/Punches/((query.user))'
+    "
+    "empHistory"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id LIKE '/Audit/Punches/((query.user))%'
+    "
+}}
+
+<head>
+    <title>mmpERP</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="MMP ERP!">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/w3.css @encoding=link}">
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/mmp-style.css @encoding=link}">
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/free.min.css @encoding=link}">
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/free-v4-font-face.min.css @encoding=link}">
+    <link rel="stylesheet" href="{#asset Application/Assets/Styles/free-v4-shims.min.css @encoding=link}">
+    <script src="{#asset Application/Assets/Scripts/autocomplete.js @encoding=link}"> </script>
+    <script src="{#asset Application/Assets/Scripts/dData2.js @encoding=link}"> </script>
+    
+    <style>
+    html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+    </style>
+</head>
+{{#if query.user}}
+<body>
+    <div class="w3-container">
+        <div class="w3-container w3-third">
+            <div class="w3-panel w3-blue w3-center">
+                <h2>Punch Options</h2>
+            </div>
+            <!-- If Status is OUT -->
+            <div class="w3-container w3-margin">
+                <button class="w3-button w3-white w3-hover-green w3-border w3-border-green" style="width:100%; border-radius:10em;">
+                    <h1><strong>IN</strong></h1>
+                </button>
+            </div>
+            <!-- If Status is IN -->
+            <div class="w3-container w3-margin">
+                <button class="w3-button w3-white w3-hover-yellow w3-border w3-border-yellow" style="width:100%; border-radius:10em;"><h1><strong>LUNCH</strong></h1></button>
+            </div>
+            <div class="w3-container w3-margin">
+                <button class="w3-button w3-white w3-hover-yellow w3-border w3-border-yellow" style="width:100%; border-radius:10em;"><h1><strong>BREAK</strong></h1></button>
+            </div>
+            <div class="w3-container w3-margin">
+                <button class="w3-button w3-white w3-hover-purple w3-border w3-border-purple" style="width:100%; border-radius:10em;"><h1><strong>OFF-SITE</strong></h1></button>
+            </div>
+            <!-- If Status is LUNCH, BREAK, OFF-SITE -->
+            <div class="w3-container w3-margin">
+                <button class="w3-button w3-white w3-hover-green w3-border w3-border-green" style="width:100%; border-radius:10em;"><h1><strong>RETURN (IN)</strong></h1></button>
+            </div>
+            <!-- If Status is not OUT -->
+            <div class="w3-container w3-margin">
+                <button class="w3-button w3-white w3-hover-red w3-border w3-border-red" style="width:100%; border-radius:10em;"><h1><strong>OUT</strong></h1></button>
+            </div>
+        </div>
+        <div class="w3-container w3-twothird">
+            <div class="w3-row">
+                <div class="w3-panel w3-blue w3-center">
+                    <h2>Punch Note (Optional)</h2>
+                </div>
+                <div class="w3-row">
+                    <textarea id="punchnote" style="width:100%"></textarea>
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-panel w3-blue w3-center">
+                    <h2>Punch History</h2>
+                </div>
+                {{#if empInfo.[0].docid}}
+                    <h2>Info. Exists for User {{query.user}}</h2>
+                    <p>{{toJSON empInfo}}</p>
+                {{else}}
+                    <h2>Info. Doesn't Exist for User {{query.user}}</h2>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</body>
+{{else}}
+<h2>ERROR: You must provide a user id in the URL</h2>
+{{/if}}
+{{/db_query}}
+{{else}}
+<h2>You do not have permission to use the punch page</h2>
+{{/ifHasRole}}
+{{/if}}

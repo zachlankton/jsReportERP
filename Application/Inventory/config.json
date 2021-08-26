@@ -1,0 +1,14 @@
+{
+    "name": "Inventory",
+    "__entitySet": "folders",
+    "__name": "Sales",
+    "creationDate": {
+        "$$date": 1604088540341
+    },
+    "modificationDate": {
+        "$$date": 1604088549071
+    },
+    "shortid": "7LeYCjl",
+    "_id": "p7BlImbxhD2oRgX8",
+    "$entitySet": "folders"
+}

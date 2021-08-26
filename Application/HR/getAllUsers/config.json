@@ -1,0 +1,13 @@
+{
+    "shortid": "E_DvTnYx8w",
+    "name": "getAllUsers",
+    "creationDate": {
+        "$$date": 1613016844165
+    },
+    "modificationDate": {
+        "$$date": 1619924399040
+    },
+    "_id": "ZRVdrfeDZgdZi0Ng",
+    "$entitySet": "scripts",
+    "isGlobal": false
+}

@@ -1,0 +1,30 @@
+ <row class="w3-row">
+     <column class="w3-col m12">
+        <card class="w3-card w3-block w3-auto" style="max-width: 400px;">
+            <header class="w3-container w3-theme">
+                <h1>User Login</h1>
+            </header>
+
+            <form class="w3-container w3-margin w3-padding" id="login_form" method="post" action="">
+                <p>
+                <label>User:</label>
+                <input class="w3-input w3-border" name="user">
+                </p>
+                <p>
+                <label>Password:</label>
+                <input class="w3-input w3-border" name="pw" type="password">
+                </p>
+                <p class="w3-margin w3-padding">
+                <label></label>
+                <input type="submit" value="Login" class="w3-green w3-btn w3-block">
+                </p>
+
+            </form>
+        </card>
+    </column>
+ </row>
+
+<script>
+    var login_form = document.getElementById("login_form");
+    login_form.action = "https://fusion-auth.mmpmg.com:3000/login?redirect=" + location.href;
+</script>

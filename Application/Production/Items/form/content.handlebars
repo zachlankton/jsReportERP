@@ -1,0 +1,197 @@
+{{#if user.isAuthenticated}}
+
+    {{use_save_handler_for_db "/Items"}}
+
+    {{#db_query
+    "item"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/Items/((query.docid))'
+    "
+    }}
+
+{{#with item.[0]}}
+<div d-data name="itemForm">
+
+    <h1>Item Form</h1>
+
+    <div class="w3-card">
+        <div class="w3-container w3-blue">
+            <h3>Basic Info.</h3>
+        </div>
+        <div class="w3-padding w3-row">
+            <div class="w3-half w3-padding">
+                <input type="hidden" id="idEl" name="docid" value="{{docid}}">
+                <input type="hidden" name="rev" value="{{rev}}">
+                <label><b>Item Type:</b></label>
+                <select class="w3-input" onchange="showHideFields(this)" name="type">
+                    <option value="production">Production</option>
+                    <option value="raw">Raw Material</option>
+                    <option value="byproduct">Byproduct</option>
+                    <option value="shop_Inv">Shop Supplies - Inventoried</option>
+                    <option value="shop_Non">Shop Supplies - Non-Inventoried</option>
+                </select>
+            </div>
+            <div class="w3-half w3-padding">
+                <label><b>Item Number</b></label>
+                <input class="w3-input w3-border" type="text">
+                
+                <label><b>Description</b></label>
+                <input class="w3-input w3-border" type="text">
+            </div>
+        </div>
+    </div>
+
+    <form class="w3-row" id="production-fields" onsubmit="return false"> {{!-- ============================== PRODUCTION PARTS ========================== --}}
+        <div class="w3-third">
+            <div class="w3-card w3-padding w3-margin">
+                <h3>Customer Relations</h3>
+                <table class="w3-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Customer P/N</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr d-data name="customerRelationship">
+                            <td><input class="w3-input w3-border" type="text" name="customer"></td>
+                            <td><input class="w3-input w3-border" type="text" name="customerPN"></td>
+                            <td><button class="w3-button w3-red" onclick="dData.remove(this);" tabindex="-1">X</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="w3-button w3-green" onclick="dData.add('customerRelationship', this)">Add Customer Relation</button>
+            </div>
+        </div>
+        <div class="w3-twothird">
+            <div class="w3-card w3-padding w3-margin">
+                <h3>Production Steps</h3>
+                <ul class="w3-ul">
+                    <li class="w3-bar w3-white w3-border">
+                        <i class="fas fa-cubes" style="font-size: 4em; float: left;"></i>
+                        <span onclick="this.parentElement.style.display='none'"
+                        class="w3-bar-item w3-button w3-xlarge w3-right">&times;</span>
+                        <div class="w3-bar-item">
+                            <span class="w3-large">Raw Material</span><br>
+                            <span>AZ-91D</span>
+                        </div>
+                    </li>
+                    <li class="w3-bar w3-white w3-border">
+                        <i class="fas fa-compress-arrows-alt" style="font-size: 4em; float: left;"></i>
+                        <span onclick="this.parentElement.style.display='none'"
+                        class="w3-bar-item w3-button w3-xlarge w3-right">&times;</span>
+                        <div class="w3-bar-item">
+                            <span class="w3-large">Mold & Trim</span><br>
+                            <span>Theresa</span>
+                        </div>
+                    </li>
+                    <li class="w3-bar w3-white w3-border">
+                        <i class="fas fa-cogs" style="font-size: 4em; float: left;"></i>
+                        <span onclick="this.parentElement.style.display='none'"
+                        class="w3-bar-item w3-button w3-xlarge w3-right">&times;</span>
+                        <div class="w3-bar-item">
+                            <span class="w3-large">Machining</span><br>
+                            <span>Absolute Machining</span>
+                        </div>
+                    </li>
+                    <li class="w3-bar w3-white w3-border">
+                        <i class="fas fa-truck" style="font-size: 4em; float: left;"></i>
+                        <span onclick="this.parentElement.style.display='none'"
+                        class="w3-bar-item w3-button w3-xlarge w3-right">&times;</span>
+                        <div class="w3-bar-item">
+                            <span class="w3-large">Freight</span><br>
+                            <span>UPS</span>
+                        </div>
+                    </li>
+                    <li class="w3-bar w3-white w3-border">
+                        <span class="w3-bar-item w3-circle w3-green" style="height: 50px; width: 50px"></span>
+                        <span onclick="this.parentElement.style.display='none'"
+                        class="w3-bar-item w3-button w3-xlarge w3-right">&times;</span>
+                        <div class="w3-bar-item">
+                            <span class="w3-large">Plating</span><br>
+                            <span>Saporito Finishing</span>
+                        </div>
+                    </li>
+                </ul>
+                <button class="w3-button w3-green w3-margin">Add Step</button>
+            </div>
+        </div>
+    
+    </form>
+
+    <form class="w3-row" id="raw-fields" style="display:none" onsubmit="return false"> {{!-- ================ RAW MATERIAL ============================== --}}
+        Raw Material
+    </form>
+
+    <form class="w3-row" id="byproduct-fields" style="display:none" onsubmit="return false"> {{!-- ========== BYPRODUCTS ================================ --}}
+        Byproduct
+    </form>
+
+    <form class="w3-row" id="shop_Inv-fields" style="display:none" onsubmit="return false"> {{!-- =========== SHOP SUPPLIES (INVENTORIED) ================ --}}
+        Shop Supplies (Inventoried)
+    </form>
+
+    <form class="w3-row" id="shop_Non-fields" style="display:none" onsubmit="return false"> {{!-- =========== SHOP SUPPLIES (NON-INVENTORIED) ============ --}}
+        Shop Supplies (Not Inventoried)
+    </form>
+</div>
+{{/with}}
+
+<script>
+    var productionFields = document.getElementById("production-fields");
+    var rawFields = document.getElementById("raw-fields");
+    var byproductFields = document.getElementById("byproduct-fields");
+    var shop_InvFields = document.getElementById("shop_Inv-fields");
+    var shop_NonFields = document.getElementById("shop_Non-fields");
+
+    function showHideFields(el) {
+        switch(el.value) {
+        case "production":
+            productionFields.style.display = "block";
+            rawFields.style.display        = "none";
+            byproductFields.style.display  = "none";
+            shop_InvFields.style.display   = "none";
+            shop_NonFields.style.display   = "none";
+            break;
+        case "raw":
+            productionFields.style.display = "none";
+            rawFields.style.display        = "block";
+            byproductFields.style.display  = "none";
+            shop_InvFields.style.display   = "none";
+            shop_NonFields.style.display   = "none";
+            break;
+        case "byproduct":
+            productionFields.style.display = "none";
+            rawFields.style.display        = "none";
+            byproductFields.style.display  = "block";
+            shop_InvFields.style.display   = "none";
+            shop_NonFields.style.display   = "none";
+            break;
+        case "shop_Inv":
+            productionFields.style.display = "none";
+            rawFields.style.display        = "none";
+            byproductFields.style.display  = "none";
+            shop_InvFields.style.display   = "block";
+            shop_NonFields.style.display   = "none";
+            break;
+        case "shop_Non":
+            productionFields.style.display = "none";
+            rawFields.style.display        = "none";
+            byproductFields.style.display  = "none";
+            shop_InvFields.style.display   = "none";
+            shop_NonFields.style.display   = "block";
+            break;
+        default:
+            productionFields.style.display = "block";
+            rawFields.style.display        = "none";
+            byproductFields.style.display  = "none";
+            shop_InvFields.style.display   = "none";
+            shop_NonFields.style.display   = "none";
+        }
+    }
+</script>
+
+    {{/db_query}}
+
+{{/if}}

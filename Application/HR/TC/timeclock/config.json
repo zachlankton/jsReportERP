@@ -1,0 +1,25 @@
+{
+    "shortid": "h4Xdz0VuFr",
+    "name": "timeclock",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1612191969383
+    },
+    "modificationDate": {
+        "$$date": 1614378873970
+    },
+    "_id": "6E9YHmtrmPDX8TTX",
+    "$entitySet": "templates",
+    "scripts": [
+        {
+            "shortid": "E_DvTnYx8w"
+        },
+        {
+            "shortid": "8VM2cJswRV"
+        }
+    ]
+}

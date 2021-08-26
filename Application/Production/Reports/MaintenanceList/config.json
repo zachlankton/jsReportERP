@@ -1,0 +1,22 @@
+{
+    "name": "MaintenanceList",
+    "recipe": "html",
+    "shortid": "EbCW8gJHnb",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1624367920589
+    },
+    "modificationDate": {
+        "$$date": 1624585036654
+    },
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ],
+    "_id": "DhVYJbWz067snL3G",
+    "$entitySet": "templates"
+}

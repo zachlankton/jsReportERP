@@ -1,0 +1,12 @@
+{
+    "name": "employee",
+    "creationDate": {
+        "$$date": 1612997471089
+    },
+    "modificationDate": {
+        "$$date": 1613014244986
+    },
+    "shortid": "GnZuVUG",
+    "_id": "JNuwd5p3LYrdhbrF",
+    "$entitySet": "folders"
+}

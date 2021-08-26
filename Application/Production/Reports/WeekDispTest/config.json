@@ -1,0 +1,22 @@
+{
+    "name": "WeekDispTest",
+    "recipe": "html",
+    "shortid": "rQ6EyvgkDj",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ],
+    "creationDate": {
+        "$$date": 1624480619846
+    },
+    "modificationDate": {
+        "$$date": 1624585100105
+    },
+    "_id": "AoIB9xPpLiiL2Sap",
+    "$entitySet": "templates"
+}

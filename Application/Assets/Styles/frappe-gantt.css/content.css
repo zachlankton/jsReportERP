@@ -1,0 +1,403 @@
+@media print {
+  .gantt-wrapper .gantt-container {
+    height: calc(100% - 200px) !important;
+  }
+  .gantt-wrapper .header-label .add-row {
+    display:none;
+  }
+}
+
+.gantt .grid-background {
+  fill: none; }
+
+.gantt .grid-header {
+  fill: #ffffff;
+  stroke: #e0e0e0;
+  stroke-width: 1.4; }
+
+.gantt .grid-row {
+  fill: #ffffff; }
+
+.gantt .grid-row:nth-child(even) {
+  fill: #fafaff; }
+
+.gantt .row-line {
+  stroke: #ebeff2; }
+
+.gantt .tick {
+  stroke: #000000;
+  stroke-width: 0.2; }
+  .gantt .tick.thick {
+    stroke-width: 0.4; }
+
+.gantt .today-highlight {
+  fill: #ffd600;
+  opacity: 0.5; }
+
+.gantt .weekend-highlight {
+  fill: #e0e0e0;
+  opacity: 0.5; }
+
+.gantt .arrow {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.4; }
+
+.gantt .bar {
+  fill: #b8c2cc;
+  stroke: #8D99A6;
+  stroke-width: 0;
+  transition: stroke-width .3s ease;
+  user-select: none; }
+
+.gantt .bar-progress {
+  fill: #a3a3ff; }
+
+.gantt .bar-invalid {
+  fill: transparent;
+  stroke: #8D99A6;
+  stroke-width: 1;
+  stroke-dasharray: 5; }
+  .gantt .bar-invalid ~ .bar-label {
+    fill: #555; }
+
+.gantt .bar-label {
+  fill: #fff;
+  dominant-baseline: central;
+  text-anchor: middle;
+  font-size: 10px;
+  font-weight: lighter; }
+  .gantt .bar-label.big {
+    fill: #555;
+    text-anchor: start; }
+
+.gantt .handle {
+  fill: #ddd;
+  cursor: ew-resize;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s ease; }
+
+.gantt .handle.progress {
+  fill: grey;
+}
+
+.gantt .bar-wrapper {
+  cursor: pointer;
+  outline: none; }
+  .gantt .bar-wrapper:hover .bar {
+    fill: #a9b5c1; }
+  .gantt .bar-wrapper:hover .bar-progress {
+    fill: #8a8aff; }
+  .gantt .bar-wrapper:hover .handle {
+    visibility: visible;
+    opacity: 1; }
+  .gantt .bar-wrapper.active .bar {
+    fill: #a9b5c1; }
+  .gantt .bar-wrapper.active .bar-progress {
+    fill: #8a8aff; }
+
+.gantt .lower-text, .gantt .upper-text {
+  font-size: 12px;
+  text-anchor: middle; }
+
+.gantt .upper-text {
+  fill: #555; }
+
+.gantt .lower-text {
+  fill: #333; }
+
+.gantt .hide {
+  display: none; }
+
+.gantt-header {
+  border-bottom: 1px solid lightgray;
+  border-top: 1px solid lightgray;
+  display: flex;
+  /* align-items: baseline; */
+}
+
+.gantt-header .add-row input {
+  height: 20px;
+  padding: 1px;
+  margin: 1px;
+  width: 150px;
+  line-height: 25px;
+}
+
+.gantt-header .add-row {
+  margin-top: 10px;
+  font-size: 10px;
+}
+
+.gantt-header .header-label select {
+  font-size: 12px;
+  padding: 1px;
+  margin: 1px;
+  height: 25px;
+}
+
+.gantt-header .header-row {
+  overflow-x: auto;
+  flex: 12;
+  border-left: 1px solid lightgray;
+}
+
+.gantt-header .header-label {
+  overflow-x: auto;
+  flex: 1;
+  min-width: 250px;
+  padding: 10px;
+}
+
+.gantt-header .header-label>* { margin-left: 7px;}
+
+.gantt-container {
+  display: flex;
+}
+
+.gantt-container .row-labels-wrapper {
+  flex: 1;
+  min-width:250px;
+  overflow: hidden;
+}
+
+.gantt-container .row-labels {
+  margin: 0px;
+  padding: 0px;
+}
+
+.gantt-container .row-labels-wrapper li {
+  background-color:white;
+  display: block;
+  text-align: right;
+  padding-right: 15px;
+  border-bottom: 1px solid lightgray;
+  user-select: none;
+  cursor: grab;
+}
+
+.gantt-container .svg-wrapper {
+  flex: 12;
+  border-left: 1px solid lightgray;
+}
+
+
+.svg-wrapper {
+  position: relative;
+  overflow: auto;
+  font-size: 12px; }
+.svg-wrapper .popup-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 0;
+    color: #959da5;
+    border-radius: 3px; }
+    .svg-wrapper .popup-wrapper .title {
+      border-bottom: 3px solid #a3a3ff;
+      padding: 10px; }
+    .svg-wrapper .popup-wrapper .subtitle {
+      padding: 10px;
+      color: #dfe2e5; }
+    .svg-wrapper .popup-wrapper .pointer {
+      position: absolute;
+      height: 5px;
+      margin: 0 0 0 -5px;
+      border: 5px solid transparent;
+      border-top-color: rgba(0, 0, 0, 0.8); }
+
+
+
+
+
+      /*
+
+  COLORS
+  Better default colors for the web
+
+*/
+/* 
+
+   VARIABLES
+
+   - Cool
+   - Warm
+   - Gray Scale
+
+*/
+/*
+
+   SKINS
+   - Backgrounds
+   - Colors
+   - Border colors
+   - SVG fills
+   - SVG Strokes
+
+*/
+/* Backgrounds */
+.bg-navy { background-color: #001F3F; }
+.bg-blue { background-color: #0074D9; }
+.bg-aqua { background-color: #7FDBFF; }
+.bg-teal { background-color: #39CCCC; }
+.bg-olive { background-color: #3D9970; }
+.bg-green { background-color: #2ECC40; }
+.bg-lime { background-color: #01FF70; }
+.bg-yellow { background-color: #FFDC00; }
+.bg-orange { background-color: #FF851B; }
+.bg-red { background-color: #FF4136; }
+.bg-fuchsia { background-color: #F012BE; }
+.bg-purple { background-color: #B10DC9; }
+.bg-maroon { background-color: #85144B; }
+.bg-white { background-color: #FFFFFF; }
+.bg-gray { background-color: #AAAAAA; }
+.bg-silver { background-color: #DDDDDD; }
+.bg-black { background-color: #111111; }
+
+/* Colors */
+.navy { color: #001F3F; }
+.blue { color: #0074D9; }
+.aqua { color: #7FDBFF; }
+.teal { color: #39CCCC; }
+.olive { color: #3D9970; }
+.green { color: #2ECC40; }
+.lime { color: #01FF70; }
+.yellow { color: #FFDC00; }
+.orange { color: #FF851B; }
+.red { color: #FF4136; }
+.fuchsia { color: #F012BE; }
+.purple { color: #B10DC9; }
+.maroon { color: #85144B; }
+.white { color: #FFFFFF; }
+.silver { color: #DDDDDD; }
+.gray { color: #AAAAAA; }
+.black { color: #111111; }
+/* Border colors 
+
+   Use with another border utility that sets border-width and style 
+   i.e .border { border-width: 1px); border-style: solid); }     
+*/
+.border--navy { border-color: #001F3F; }
+.border--blue { border-color: #0074D9; }
+.border--aqua { border-color: #7FDBFF; }
+.border--teal { border-color: #39CCCC; }
+.border--olive { border-color: #3D9970; }
+.border--green { border-color: #2ECC40; }
+.border--lime { border-color: #01FF70; }
+.border--yellow { border-color: #FFDC00; }
+.border--orange { border-color: #FF851B; }
+.border--red { border-color: #FF4136; }
+.border--fuchsia { border-color: #F012BE; }
+.border--purple { border-color: #B10DC9; }
+.border--maroon { border-color: #85144B; }
+.border--white { border-color: #FFFFFF; }
+.border--gray { border-color: #AAAAAA; }
+.border--silver { border-color: #DDDDDD; }
+.border--black { border-color: #111111; }
+
+
+/* Fills for SVG */
+/* Bar Color Fill */
+.bar-wrapper.fill-navy>.bar-group>rect.bar { fill: #001F3F; }
+.bar-wrapper.fill-blue>.bar-group>rect.bar { fill: #0074D9; }
+.bar-wrapper.fill-aqua>.bar-group>rect.bar { fill: #7FDBFF; }
+.bar-wrapper.fill-teal>.bar-group>rect.bar { fill: #39CCCC; }
+.bar-wrapper.fill-olive>.bar-group>rect.bar { fill: #3D9970; }
+.bar-wrapper.fill-green>.bar-group>rect.bar { fill: #2ECC40; }
+.bar-wrapper.fill-lime>.bar-group>rect.bar { fill: #01FF70; }
+.bar-wrapper.fill-yellow>.bar-group>rect.bar { fill: #FFDC00; }
+.bar-wrapper.fill-orange>.bar-group>rect.bar { fill: #FF851B; }
+.bar-wrapper.fill-red>.bar-group>rect.bar { fill: #FF4136; }
+.bar-wrapper.fill-fuchsia>.bar-group>rect.bar { fill: #F012BE; }
+.bar-wrapper.fill-purple>.bar-group>rect.bar { fill: #B10DC9; }
+.bar-wrapper.fill-maroon>.bar-group>rect.bar { fill: #85144B; }
+.bar-wrapper.fill-white>.bar-group>rect.bar { fill: #FFFFFF; }
+.bar-wrapper.fill-gray>.bar-group>rect.bar { fill: #AAAAAA; }
+.bar-wrapper.fill-silver>.bar-group>rect.bar { fill: #DDDDDD; }
+.bar-wrapper.fill-black>.bar-group>rect.bar { fill: #111111; }
+
+/* Fills for SVG */
+/* Progress Bar Color */
+.bar-wrapper.progress-navy>.bar-group>rect.bar-progress { fill: #001F3F; }
+.bar-wrapper.progress-blue>.bar-group>rect.bar-progress { fill: #0074D9; }
+.bar-wrapper.progress-aqua>.bar-group>rect.bar-progress { fill: #7FDBFF; }
+.bar-wrapper.progress-teal>.bar-group>rect.bar-progress { fill: #39CCCC; }
+.bar-wrapper.progress-olive>.bar-group>rect.bar-progress { fill: #3D9970; }
+.bar-wrapper.progress-green>.bar-group>rect.bar-progress { fill: #2ECC40; }
+.bar-wrapper.progress-lime>.bar-group>rect.bar-progress { fill: #01FF70; }
+.bar-wrapper.progress-yellow>.bar-group>rect.bar-progress { fill: #FFDC00; }
+.bar-wrapper.progress-orange>.bar-group>rect.bar-progress { fill: #FF851B; }
+.bar-wrapper.progress-red>.bar-group>rect.bar-progress { fill: #FF4136; }
+.bar-wrapper.progress-fuchsia>.bar-group>rect.bar-progress { fill: #F012BE; }
+.bar-wrapper.progress-purple>.bar-group>rect.bar-progress { fill: #B10DC9; }
+.bar-wrapper.progress-maroon>.bar-group>rect.bar-progress { fill: #85144B; }
+.bar-wrapper.progress-white>.bar-group>rect.bar-progress { fill: #FFFFFF; }
+.bar-wrapper.progress-gray>.bar-group>rect.bar-progress { fill: #AAAAAA; }
+.bar-wrapper.progress-silver>.bar-group>rect.bar-progress { fill: #DDDDDD; }
+.bar-wrapper.progress-black>.bar-group>rect.bar-progress { fill: #111111; }
+
+/* Fills for SVG */
+/* Scrap Bar Color */
+.bar-wrapper.scrap-navy>.bar-group>rect.scrap-progress { fill: #001F3F; }
+.bar-wrapper.scrap-blue>.bar-group>rect.scrap-progress { fill: #0074D9; }
+.bar-wrapper.scrap-aqua>.bar-group>rect.scrap-progress { fill: #7FDBFF; }
+.bar-wrapper.scrap-teal>.bar-group>rect.scrap-progress { fill: #39CCCC; }
+.bar-wrapper.scrap-olive>.bar-group>rect.scrap-progress { fill: #3D9970; }
+.bar-wrapper.scrap-green>.bar-group>rect.scrap-progress { fill: #2ECC40; }
+.bar-wrapper.scrap-lime>.bar-group>rect.scrap-progress { fill: #01FF70; }
+.bar-wrapper.scrap-yellow>.bar-group>rect.scrap-progress { fill: #FFDC00; }
+.bar-wrapper.scrap-orange>.bar-group>rect.scrap-progress { fill: #FF851B; }
+.bar-wrapper.scrap-red>.bar-group>rect.scrap-progress { fill: #FF4136; }
+.bar-wrapper.scrap-fuchsia>.bar-group>rect.scrap-progress { fill: #F012BE; }
+.bar-wrapper.scrap-purple>.bar-group>rect.scrap-progress { fill: #B10DC9; }
+.bar-wrapper.scrap-maroon>.bar-group>rect.scrap-progress { fill: #85144B; }
+.bar-wrapper.scrap-white>.bar-group>rect.scrap-progress { fill: #FFFFFF; }
+.bar-wrapper.scrap-gray>.bar-group>rect.scrap-progress { fill: #AAAAAA; }
+.bar-wrapper.scrap-silver>.bar-group>rect.scrap-progress { fill: #DDDDDD; }
+.bar-wrapper.scrap-black>.bar-group>rect.scrap-progress { fill: #111111; }
+
+
+
+/* Fills for SVG */
+/* Text */
+.bar-wrapper.text-navy>.bar-group>text.bar-label { fill: #001F3F; }
+.bar-wrapper.text-blue>.bar-group>text.bar-label { fill: #0074D9; }
+.bar-wrapper.text-aqua>.bar-group>text.bar-label { fill: #7FDBFF; }
+.bar-wrapper.text-teal>.bar-group>text.bar-label { fill: #39CCCC; }
+.bar-wrapper.text-olive>.bar-group>text.bar-label { fill: #3D9970; }
+.bar-wrapper.text-green>.bar-group>text.bar-label { fill: #2ECC40; }
+.bar-wrapper.text-lime>.bar-group>text.bar-label { fill: #01FF70; }
+.bar-wrapper.text-yellow>.bar-group>text.bar-label { fill: #FFDC00; }
+.bar-wrapper.text-orange>.bar-group>text.bar-label { fill: #FF851B; }
+.bar-wrapper.text-red>.bar-group>text.bar-label { fill: #FF4136; }
+.bar-wrapper.text-fuchsia>.bar-group>text.bar-label { fill: #F012BE; }
+.bar-wrapper.text-purple>.bar-group>text.bar-label { fill: #B10DC9; }
+.bar-wrapper.text-maroon>.bar-group>text.bar-label { fill: #85144B; }
+.bar-wrapper.text-white>.bar-group>text.bar-label { fill: #FFFFFF; }
+.bar-wrapper.text-gray>.bar-group>text.bar-label { fill: #AAAAAA; }
+.bar-wrapper.text-silver>.bar-group>text.bar-label { fill: #DDDDDD; }
+.bar-wrapper.text-black>.bar-group>text.bar-label { fill: #111111; }
+
+
+/* Strokes for SVG */
+.bar-wrapper.stroke-navy>.bar-group>rect.bar { stroke: #001F3F; stroke-width: 2px;}
+.bar-wrapper.stroke-blue>.bar-group>rect.bar { stroke: #0074D9; stroke-width: 2px;}
+.bar-wrapper.stroke-aqua>.bar-group>rect.bar { stroke: #7FDBFF; stroke-width: 2px;}
+.bar-wrapper.stroke-teal>.bar-group>rect.bar { stroke: #39CCCC; stroke-width: 2px;}
+.bar-wrapper.stroke-olive>.bar-group>rect.bar { stroke: #3D9970; stroke-width: 2px;}
+.bar-wrapper.stroke-green>.bar-group>rect.bar { stroke: #2ECC40; stroke-width: 2px;}
+.bar-wrapper.stroke-lime>.bar-group>rect.bar { stroke: #01FF70; stroke-width: 2px;}
+.bar-wrapper.stroke-yellow>.bar-group>rect.bar { stroke: #FFDC00; stroke-width: 2px;}
+.bar-wrapper.stroke-orange>.bar-group>rect.bar { stroke: #FF851B; stroke-width: 2px;}
+.bar-wrapper.stroke-red>.bar-group>rect.bar { stroke: #FF4136; stroke-width: 2px;}
+.bar-wrapper.stroke-fuchsia>.bar-group>rect.bar { stroke: #F012BE; stroke-width: 2px;}
+.bar-wrapper.stroke-purple>.bar-group>rect.bar { stroke: #B10DC9; stroke-width: 2px;}
+.bar-wrapper.stroke-maroon>.bar-group>rect.bar { stroke: #85144B; stroke-width: 2px;}
+.bar-wrapper.stroke-white>.bar-group>rect.bar { stroke: #FFFFFF; stroke-width: 2px;}
+.bar-wrapper.stroke-gray>.bar-group>rect.bar { stroke: #AAAAAA; stroke-width: 2px;}
+.bar-wrapper.stroke-silver>.bar-group>rect.bar { stroke: #DDDDDD; stroke-width: 2px;}
+.bar-wrapper.stroke-black>.bar-group>rect.bar { stroke: #111111; stroke-width: 2px;}
+
+

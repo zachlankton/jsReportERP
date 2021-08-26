@@ -1,0 +1,22 @@
+{
+    "shortid": "-gmv-XYLzu",
+    "name": "QuarantineDisposition",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ],
+    "creationDate": {
+        "$$date": 1629345381575
+    },
+    "modificationDate": {
+        "$$date": 1629345510855
+    },
+    "_id": "5gUhVsjpK92KkIWN",
+    "$entitySet": "templates"
+}

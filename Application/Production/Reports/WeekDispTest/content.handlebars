@@ -1,0 +1,426 @@
+{{#if user.isAuthenticated}}
+
+    {{#db_query
+        "reports"
+        "SELECT mmp.*
+         FROM mmp 
+         WHERE dbNamespace = '/ProductionReports'
+         ORDER BY date ASC
+        "
+    }}
+
+
+    <div class="w3-row w3-margin">
+        <label>Begin Date:</label>
+        <input type="date" id="begDate" onchange="limitViaDates()">
+        <label>End Date:</label>
+        <input type="date" id="endDate" onchange="limitViaDates()">
+        <button onclick="thisWeek();">This Week</button>
+        <button onclick="lastWeek();">Last Week</button>
+        <button onclick="clearDates();">Clear Dates</button>
+    </div>
+
+<div class="w3-row" d-data name="showReport" object>
+    <div class="w3-col m4 s12" d-data name="col1">
+        <!-- ================  CARD  ================== -->
+        <div class="w3-padding" d-data name="card">
+            <div class="w3-card-4 w3-dark-grey">
+        <!-- ================  HEADER  ================== -->
+                <header class="w3-container w3-blue">
+                    <h1 name="title">LAZARUS</h1>
+                </header>
+        <!-- ================  CONTENT  ================== -->
+                <div class="w3-container">
+                    <table class="w3-table">
+                        <thead>
+                            <tr>
+                                <th style="width:30%">Date</th>
+                                <th style="width:30%">Part No.</th>
+                                <th style="width:40%">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr d-data name="reports" onclick="navToDoc(this)">
+                                <input type="hidden" name="docid">
+                                <td name="date">6/07/2021</td>
+                                <td name="partNo">40097012</td>
+                                <td>
+                                    <div id="statusBar">
+                                        {{!-- <div class="w3-bar w3-light-grey">
+                                            <div class="w3-bar-item w3-blue" style="padding:0px;height:6px;width:70%"></div>
+                                            <div class="w3-bar-item w3-yellow" style="padding:0px;height:6px;width:10%"></div>
+                                        </div> --}}
+                                        <div class="status-bar-container-good w3-bar w3-light-grey">
+                                            <div id="goodBar" class="w3-bar-item w3-green" style="padding:0px;height:24px;width:0%"></div>
+                                        </div>
+                                        <div class="status-bar-container-scrap w3-bar w3-light-grey">
+                                            <div id="scrapBar" class="w3-bar-item w3-red" style="padding:0px;height:6px;width:0%"></div>
+                                        </div>
+                                        <input type="hidden" name="good">
+                                        <input type="hidden" name="scrap">
+                                        <input type="hidden" name="goal">
+                                        <input type="hidden" name="operation">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        <!-- ================  FOOTER  ================== -->
+                <footer id="totalStatusBar" class="w3-container w3-blue w3-padding">
+                    <div class="w3-row">
+                        <div class="w3-third">GOOD: <span name="totalGood"></span></div>
+                        <div class="w3-third">SCRAP: <span name="totalScrap"></span></div>
+                        <div class="w3-third">
+                            <div class="w3-bar w3-light-grey">
+                                <div id="totalGoodBar" class="w3-bar-item w3-green" style="padding:0px;height:24px;width:0%"></div>
+                            </div>
+                            <div class="w3-bar w3-light-grey">
+                                <div id="totalScrapBar" class="w3-bar-item w3-red" style="padding:0px;height:6px;width:0%"></div>
+                            </div>
+                            <input type="hidden" name="totalGoal">
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div> <!-- END CARD -->
+    </div> <!-- END col1 -->
+    <div class="w3-col m4 s12" d-data name="col2">
+        <!-- ================  CARD  ================== -->
+        <div class="w3-padding" d-data name="card">
+            <div class="w3-card-4 w3-dark-grey">
+        <!-- ================  HEADER  ================== -->
+                <header class="w3-container w3-blue">
+                    <h1 name="title">LAZARUS</h1>
+                </header>
+        <!-- ================  CONTENT  ================== -->
+                <div class="w3-container">
+                    <table class="w3-table">
+                        <thead>
+                            <tr>
+                                <th style="width:30%">Date</th>
+                                <th style="width:30%">Part No.</th>
+                                <th style="width:40%">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr d-data name="reports" onclick="navToDoc(this)">
+                                <input type="hidden" name="docid">
+                                <td name="date">6/07/2021</td>
+                                <td name="partNo">40097012</td>
+                                <td>
+                                    <div id="statusBar">
+                                        {{!-- <div class="w3-bar w3-light-grey">
+                                            <div class="w3-bar-item w3-blue" style="padding:0px;height:6px;width:70%"></div>
+                                            <div class="w3-bar-item w3-yellow" style="padding:0px;height:6px;width:10%"></div>
+                                        </div> --}}
+                                        <div class="status-bar-container-good w3-bar w3-light-grey">
+                                            <div id="goodBar" class="w3-bar-item w3-green" style="padding:0px;height:24px;width:0%"></div>
+                                        </div>
+                                        <div class="status-bar-container-scrap w3-bar w3-light-grey">
+                                            <div id="scrapBar" class="w3-bar-item w3-red" style="padding:0px;height:6px;width:0%"></div>
+                                        </div>
+                                        <input type="hidden" name="good">
+                                        <input type="hidden" name="scrap">
+                                        <input type="hidden" name="goal">
+                                        <input type="hidden" name="operation">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        <!-- ================  FOOTER  ================== -->
+                <footer id="totalStatusBar" class="w3-container w3-blue w3-padding">
+                    <div class="w3-row">
+                        <div class="w3-third">GOOD: <span name="totalGood"></span></div>
+                        <div class="w3-third">SCRAP: <span name="totalScrap"></span></div>
+                        <div class="w3-third">
+                            <div class="w3-bar w3-light-grey">
+                                <div id="totalGoodBar" class="w3-bar-item w3-green" style="padding:0px;height:24px;width:0%"></div>
+                            </div>
+                            <div class="w3-bar w3-light-grey">
+                                <div id="totalScrapBar" class="w3-bar-item w3-red" style="padding:0px;height:6px;width:0%"></div>
+                            </div>
+                            <input type="hidden" name="totalGoal">
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div> <!-- END CARD -->
+    </div> <!-- END col2 -->
+    <div class="w3-col m4 s12" d-data name="col3">
+        <!-- ================  CARD  ================== -->
+        <div class="w3-padding" d-data name="card">
+            <div class="w3-card-4 w3-dark-grey">
+        <!-- ================  HEADER  ================== -->
+                <header class="w3-container w3-blue">
+                    <h1 name="title">LAZARUS</h1>
+                </header>
+        <!-- ================  CONTENT  ================== -->
+                <div class="w3-container">
+                    <table class="w3-table">
+                        <thead>
+                            <tr>
+                                <th style="width:30%">Date</th>
+                                <th style="width:30%">Part No.</th>
+                                <th style="width:40%">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr d-data name="reports" onclick="navToDoc(this)">
+                                <input type="hidden" name="docid">
+                                <td name="date">6/07/2021</td>
+                                <td name="partNo">40097012</td>
+                                <td>
+                                    <div id="statusBar">
+                                        {{!-- <div class="w3-bar w3-light-grey">
+                                            <div class="w3-bar-item w3-blue" style="padding:0px;height:6px;width:70%"></div>
+                                            <div class="w3-bar-item w3-yellow" style="padding:0px;height:6px;width:10%"></div>
+                                        </div> --}}
+                                        <div class="status-bar-container-good w3-bar w3-light-grey">
+                                            <div id="goodBar" class="w3-bar-item w3-green" style="padding:0px;height:24px;width:0%"></div>
+                                        </div>
+                                        <div class="status-bar-container-scrap w3-bar w3-light-grey">
+                                            <div id="scrapBar" class="w3-bar-item w3-red" style="padding:0px;height:6px;width:0%"></div>
+                                        </div>
+                                        <input type="hidden" name="good">
+                                        <input type="hidden" name="scrap">
+                                        <input type="hidden" name="goal">
+                                        <input type="hidden" name="operation">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        <!-- ================  FOOTER  ================== -->
+                <footer id="totalStatusBar" class="w3-container w3-blue w3-padding">
+                    <div class="w3-row">
+                        <div class="w3-third">GOOD: <span name="totalGood"></span></div>
+                        <div class="w3-third">SCRAP: <span name="totalScrap"></span></div>
+                        <div class="w3-third">
+                            <div class="w3-bar w3-light-grey">
+                                <div id="totalGoodBar" class="w3-bar-item w3-green" style="padding:0px;height:24px;width:0%"></div>
+                            </div>
+                            <div class="w3-bar w3-light-grey">
+                                <div id="totalScrapBar" class="w3-bar-item w3-red" style="padding:0px;height:6px;width:0%"></div>
+                            </div>
+                            <input type="hidden" name="totalGoal">
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div> <!-- END CARD -->
+    </div><!-- END col3 -->
+
+    </div> <!-- END ROW -->
+
+    <script>
+
+
+        var data = {{toJSON reports}};
+        var begDate = document.getElementById("begDate");
+        var endDate = document.getElementById("endDate");
+
+        var cardTitlesArr = [
+            'Theresa',
+            'Jessica',
+            'Lazarus',
+            'Ariel',
+            'Johnny5',
+            'Zagar'
+        ];
+
+        function limitViaDates() {
+        // Filter data according to dates
+            var filteredData = data.filter((doc)=>{
+                return doc.date >= ( begDate.value? begDate.value : doc.date ) && doc.date <= ( endDate.value? endDate.value : doc.date );
+            });
+
+        // Loop through cardTitlesArr to add filtered data
+            var arrToBePushed = [];
+
+            for(var i=0; i<cardTitlesArr.length; i++) {
+                var objToAdd = {
+                    'title'     :cardTitlesArr[i],
+                    'reports'   :[],
+                    'totalGood' : 0,
+                    'totalScrap': 0,
+                    'totalGoal' : 0
+                    };
+                // Loop through filteredData and combine the item(title) with appropriate filteredData.location
+                for(var k=0; k<filteredData.length; k++) {
+                    if(filteredData[k].location == cardTitlesArr[i]) {
+                        var sumOfScrap = 0;
+                        for(var m=0; m<filteredData[k].scrap.length; m++) { // Sum the scrap for this report
+                            sumOfScrap = sumOfScrap + parseInt(filteredData[k].scrap[m].qty ? filteredData[k].scrap[m].qty : 0);
+                        } // End For Loop [M]
+                        objToAdd.reports.push({ // Build and push an object to the report
+                            'docid'     : filteredData[k].docid,
+                            'date'      : filteredData[k].date,
+                            'partNo'    : filteredData[k].partNo,
+                            'good'      : parseInt(filteredData[k].good ? filteredData[k].good : 0),
+                            'goal'      : parseInt(filteredData[k].goal ? filteredData[k].goal : 0),
+                            'scrap'     : sumOfScrap,
+                            'operation' : filteredData[k].operation
+                        });
+
+                        objToAdd.totalGood = objToAdd.totalGood + parseInt(filteredData[k].good ? filteredData[k].good : 0); // Sum of all Good Qtys
+                        objToAdd.totalGoal = objToAdd.totalGoal + parseInt(filteredData[k].goal ? filteredData[k].goal : 0); // Sum of all Goal Qtys
+                        objToAdd.totalScrap = objToAdd.totalScrap + sumOfScrap; // Sum of all Scrap Qtys
+
+                    } // End IF
+                } // End For Loop [K]
+                
+                arrToBePushed.push(objToAdd);
+
+            } // End For Loop [I]
+
+            // TILE MATH
+            arrToBePushed.sort((a,b)=>{return b.reports.length - a.reports.length});
+
+            // var totalHeight = 0;
+            // arrToBePushed.forEach((el)=>{totalHeight += el.offsetHeight})
+
+            // if(arrToBePushed[0].offsetHeight / totalHeight > 0.50 ) {  }
+
+            // END Tile Math
+
+            dData.showReport.col1.add({'card':arrToBePushed});
+            console.log(arrToBePushed);
+
+            barUpdate();
+            totalBarUpdate();
+        } // End of function limitViaDates
+
+        function barUpdate() {
+            var allStatusBars = document.querySelectorAll('#statusBar');
+
+            for(var i=0; i<allStatusBars.length; i++) { // Loop through each Footer
+
+                if(allStatusBars[i].querySelector('[name="operation"]').value == "Maintenance") { // If operation type is Maintenance then format the bar container accordingly
+                    var goodContainer = allStatusBars[i].querySelector('.status-bar-container-good');
+                    goodContainer.classList.replace("w3-light-grey","w3-grey");
+                    var textnode = document.createTextNode("Maintenance");
+                    goodContainer.appendChild(textnode); // Apend text node instead of innerHTML to avoid error when requesting div#goodBar
+
+                    var scrapContainer = allStatusBars[i].querySelector('.status-bar-container-scrap');
+                    scrapContainer.classList.replace("w3-light-grey","w3-grey");
+                    
+                }
+                if(allStatusBars[i].querySelector('[name="operation"]').value == "plannedShutDown") { // If operation type is plannedShutDown then format the bar container accordingly
+                    var goodContainer = allStatusBars[i].querySelector('.status-bar-container-good');
+                    goodContainer.classList.replace("w3-light-grey","w3-black");
+                    var textnode = document.createTextNode("Planned Down");
+                    goodContainer.appendChild(textnode); // Apend text node instead of innerHTML to avoid error when requesting div#goodBar
+
+                    var scrapContainer = allStatusBars[i].querySelector('.status-bar-container-scrap');
+                    scrapContainer.classList.replace("w3-light-grey","w3-black");
+                }
+
+                var goodCount = parseInt(allStatusBars[i].querySelector('[name="good"]').value);
+                var scrapCount = parseInt(allStatusBars[i].querySelector('[name="scrap"]').value);
+                var goalCount = parseInt(allStatusBars[i].querySelector('[name="goal"]').value);
+
+                var goodBar = allStatusBars[i].querySelector('#goodBar');
+                var scrapBar = allStatusBars[i].querySelector('#scrapBar');
+
+                var goodRatio = 0;
+                var scrapRatio = 0;
+                var divisor = Math.max(goalCount, goodCount, scrapCount);
+
+                // Get percentages for displaying bars
+                goodRatio = Math.round(goodCount / divisor * 100);
+                scrapRatio = Math.round(scrapCount / divisor * 100);
+                
+                goodBar.style.width = goodRatio + "%";
+                scrapBar.style.width = scrapRatio + "%";
+
+            }  // End Loop through each Footer
+        }
+
+        function totalBarUpdate() {
+            var allFooters = document.querySelectorAll('#totalStatusBar');
+
+            for(var i=0; i<allFooters.length; i++) { // Loop through each Footer
+                var goodCount = parseInt(allFooters[i].querySelector('[name="totalGood"]').innerText);
+                var scrapCount = parseInt(allFooters[i].querySelector('[name="totalScrap"]').innerText);
+                var goalCount = parseInt(allFooters[i].querySelector('[name="totalGoal"]').value);
+
+                var goodBar = allFooters[i].querySelector('#totalGoodBar');
+                var scrapBar = allFooters[i].querySelector('#totalScrapBar');
+
+                var goodRatio = 0;
+                var scrapRatio = 0;
+                var divisor = Math.max(goalCount, goodCount, scrapCount);
+
+                // Get percentages for displaying bars
+                goodRatio = Math.round(goodCount / divisor * 100);
+                scrapRatio = Math.round(scrapCount / divisor * 100);
+                
+                goodBar.style.width = goodRatio + "%";
+                scrapBar.style.width = scrapRatio + "%";
+
+            }  // End Loop through each Footer
+        } // End of function totalBarUpdate
+
+        function thisWeek() {
+
+            var today = new Date();
+
+            var wkBeg = new Date();
+            wkBeg.setDate(today.getDate() - today.getDay());
+            wkBeg = wkBeg.toISOString().substring(0,10);
+
+            var wkEnd = new Date();
+            wkEnd.setDate(today.getDate() - today.getDay() + 6);
+            wkEnd = wkEnd.toISOString().substring(0,10);
+
+            begDate.value = wkBeg;
+            endDate.value = wkEnd;
+
+            limitViaDates();
+
+        }
+        
+        function lastWeek() {
+
+            var today = new Date();
+
+            var wkBeg = new Date();
+            wkBeg.setDate(today.getDate() - today.getDay() - 7);
+            wkBeg = wkBeg.toISOString().substring(0,10);
+
+            var wkEnd = new Date();
+            wkEnd.setDate(today.getDate() - today.getDay() - 1);
+            wkEnd = wkEnd.toISOString().substring(0,10);
+
+            begDate.value = wkBeg;
+            endDate.value = wkEnd;
+        
+            limitViaDates();
+        }
+
+        function clearDates() {
+            begDate.value = "";
+            endDate.value = "";
+        
+            limitViaDates();
+        }
+
+        function navToDoc(el) {
+            var doc_id = el.querySelector('[name="docid"]').value;
+
+            location.href='/Production/Reports/Form?docid='+doc_id;
+        }
+
+        window.addEventListener('load',thisWeek);
+
+        console.log("URL Variables: ","{{query.test}}");
+
+    </script>
+
+    {{/db_query}}
+    
+{{/if}}

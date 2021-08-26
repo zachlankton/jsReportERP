@@ -1,0 +1,145 @@
+
+
+{{#if user.isAuthenticated}}
+{{#ifHasRole "Quoting"}}
+    {{use_save_handler_for_db "/Quotes"}}
+    {{#db_query 
+    "quote"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/Quotes/((query.docid))'
+    "
+
+    "oldrev"
+    "   SELECT mmp.* FROM mmp
+        WHERE meta(mmp).id = '/Audit/Quotes/((query.docid))rev((query.rev))'
+    "
+
+    "customers" 
+    "   SELECT DISTINCT customer FROM mmp
+        WHERE meta(mmp).id LIKE '/Quotes/%'
+        ORDER BY customer"
+
+    "addresses" 
+    "   SELECT DISTINCT address FROM mmp
+        WHERE meta(mmp).id LIKE '/Quotes/%'
+        ORDER BY address"
+
+    "quoteGroups" 
+    "   SELECT DISTINCT quoteGroup FROM mmp
+        WHERE meta(mmp).id LIKE '/Quotes/%'
+        ORDER BY quoteGroup"
+    
+
+    }}
+        
+        {{arrayOfStrings "customers" "customer"}}
+        {{arrayOfStrings "addresses" "address"}}
+        {{arrayOfStrings "quoteGroups" "quoteGroup"}}
+        {{!-- {{toJSON quote}} --}}
+
+        {{check_if_request_for_revision}}
+        {{#with quote.[0]}}
+        <form style="" class="" d-data name="quoteForm" onsubmit="return false" autocomplete="off">
+            {{#row}}
+                
+                <div class="w3-col" style="max-width:725px;">
+                    <h1 w3-center>Quote</h1>
+                    {{#row "w3-row-padding"}}
+                        {{#col "m6"}}
+                            {{date "Due Date" "dueDate"}}
+                            {{input "Quote No" "quoteNo"}}
+                            {{datalist "Customer" "customer" "customers"}}
+                            {{autoTextArea label="Address" name="address" list="addresses"}} 
+                        {{/col}}
+                        {{#col "m6"}}
+                                            
+                            {{#select "Quote Status" "quoteStatus"}}
+                                {{opt "In Process"}}
+                                {{opt "Cancelled"}}
+                                {{opt "Submitted"}}
+                                {{opt "Awarded"}}
+                                {{opt "Archived"}}
+                            {{/select}}
+            
+                            {{datalist "Quote Group" "quoteGroup" "quoteGroups"}}
+                            {{date "Quote Date" "quoteDate"}}
+                            {{date "Expire Date" "expireDate"}}
+                            {{input "Contact" "contact"}}
+                        {{/col}}
+                    {{/row}}
+                    {{#row "w3-row-padding"}}
+                        {{#col "m3"}}  {{input "Representative" "representative"}}  {{/col}}
+                        {{#col "m3"}}  {{input "Terms" "terms"}}                    {{/col}}
+                        {{#col "m3"}}  {{input "Delivery" "delivery"}}              {{/col}}
+                        {{#col "m3"}}  {{input "FOB" "FOB"}}                        {{/col}}
+                    {{/row}}
+
+                
+                    {{#dDataEach "LineItems" "Add Line Item"}}
+                
+                    <div class="w3-card-2 w3-border w3-light-grey w3-margin">
+                        <header class="w3-container w3-hover-blue w3-theme w3-block w3-btn w3-left-align" onclick="toggleAccordion(this)">
+                            <h6>Line Item {{@index}}  {{removeBtn}} </h6>
+                        </header>
+                        {{#row "accordion w3-row-padding"}}
+                            {{#col "m6"}}
+                                {{input "Part No" "partNo"}}
+                                {{input "Part Description" "partDesc"}}
+                                {{smalltext "Quote Description" "quoteDesc"}}
+                            {{/col}}
+                            {{#col "m6"}}
+                                {{#row "w3-margin-top"}}
+                                    {{#col "s4"}} <label>Price   </label>      {{/col}}
+                                    {{#col "s4"}} <label>Quantity</label>   {{/col}}
+                                    {{#col "s3"}} <label>Unit    </label>       {{/col}}
+                                    {{#col "s1"}}   {{/col}}
+                                {{/row}}
+                            
+                                {{#dDataEach "PriceBreaks" "Add Price Break"}}
+                                    {{#row}}
+                                        {{#col "s4"}} {{input "price"}}     {{/col}}
+                                        {{#col "s4"}} {{input "quantity"}}  {{/col}}
+                                        {{#col "s3"}} {{input "unit"}}      {{/col}}
+                                        {{#col "s1"}}  {{removeBtn}} {{/col}}
+                                    {{/row}}
+                                {{/dDataEach}}
+                                
+                                
+                                
+                            {{/col}}
+                        {{/row}}
+                    </div>
+                    {{/dDataEach}}
+
+
+                    {{#row "w3-margin-bottom"}}
+                        {{#col "m12"}} {{textarea "Notes" "notes"}}                 {{/col}}
+                    {{/row}}
+                    <hr class="w3-border-theme">
+                </div>
+                
+                {#child /Components/doc_side_bar @data.baseURL=/Quotes @data.docSideBar$={{{childTemplateSerializeData this}}} }
+                {{fix_jsreport_child_template_percent_sign_bug}}
+            {{/row}}
+            {#child /Components/audit_log @data.auditLog$={{{childTemplateSerializeData this}}} }
+            {{fix_jsreport_child_template_percent_sign_bug}}
+        </form>
+        {{!-- end d-data div --}}
+
+        {{/with}}
+
+       
+
+    {{/db_query}}
+
+{{else}}
+
+    <h4>You do Not have permission to view this resource</h4>
+
+{{/ifHasRole}}
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    {#child /Application/login}
+{{/if}}

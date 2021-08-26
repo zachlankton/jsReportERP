@@ -1,0 +1,13 @@
+{
+    "name": "save_handler_for_db.js",
+    "creationDate": {
+        "$$date": 1602524323828
+    },
+    "modificationDate": {
+        "$$date": 1615176203415
+    },
+    "shortid": "l49xNtV",
+    "_id": "vHry0tVVUqobOAuj",
+    "$entitySet": "assets",
+    "isSharedHelper": true
+}

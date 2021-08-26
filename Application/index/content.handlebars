@@ -1,0 +1,11 @@
+{{#if user.isAuthenticated}}
+
+<div class="w3-panel w3-blue">
+    <h1>{{user.firstName}}, welcome to MMP's new Information Management Site</h1>
+</div>
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    {#child /Application/login}
+{{/if}}

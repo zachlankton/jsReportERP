@@ -1,0 +1,138 @@
+{{#if user.isAuthenticated}}
+{{save_specific_handler_for_db}}
+{{#ifHasRole "Admin"}}
+
+    {{#if users}}{{!-- This #if is used to control when the body is rendered on http requests --}}
+    <div class="w3-responsive">
+        <table class="w3-table-all">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Other Info.</th>
+                    <th>System</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each users}}
+                <tr>
+                    <td>{{#if fullName}}{{fullName}}
+                        {{else}}{{firstName}} {{lastName}}
+                        {{/if}}<br>
+                        {{email}}
+                    </td>
+                    <td>
+                        {{#if info.address_changed}}Address was recently updated!{{info.address_changed._path}}<br><button onclick="addressAck('/HR/employees/{{id}}')">Click Here to Acknowledge</button><br><br>{{/if}}
+                        {{#with info}}
+                        {{address_1._value}}{{#if address_2._value}}<br>{{address_2._value}}{{/if}}<br>{{address_city._value}}, {{address_state._value}} {{address_zip._value}}
+                        {{/with}}
+                    </td>
+                    <td>
+                        <table class="w3-table-all">
+                            <thead>
+                                <tr>
+                                    <th class="w3-red">Emergency Contact</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    {{#if info.EC_name}}
+                                        {{#with info}}
+                                        <td>{{EC_name._value}} ({{EC_relation._value}})<br>{{EC_cell._value}}<br>{{EC_email._value}}</td>
+                                        {{/with}}
+                                    {{else}}
+                                        <td>Not Provided</td>
+                                    {{/if}}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        User ID: <b>{{id}}</b><br>Roles: <b>{{roles}}</b><br>Last Login: <b>{{niceDate lastLogin}}</b>
+                    </td>
+                    <td class="w3-center"><button class="w3-yellow w3-button"><i class="fas fa-user-edit"></i></button></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+
+        var test = {{toJSON mappedObj}};
+
+        function addressAck(docid) {
+            save_specific(docid, [{'address_changed':'false'}])
+        }
+
+        async function save_specific(docID, changesArr){ // what document to update, Array of Objects [{FIELD: DATA},{FIELD: DATA}]
+
+            var data = {};
+            data.docID = docID;
+            data.changesArr = changesArr;
+
+            try {
+                const search = "?docid=" + docID;
+                // var results = await update(location.pathname + search + "&nowrap", data);
+                var results = await post(location.pathname + search + "&nowrap", data);
+                //results = JSON.parse(results);
+                console.log("Line 80 (HTTP Response): "+ results);
+
+
+
+                // if (results.audit.meta.status == "success"){
+                //     setTimeout(function(){
+                //         location.search = `docid=${results.query.docid}&saved=${results.d}`;
+                //     }, 100);
+                    
+                // } else {
+                //     alert ("Error: Was not able to save!");
+                //     console.log(results);
+                // }
+
+
+
+            }catch(e){
+                alert("TRY Error: Was not able to save!");
+                console.log(e);
+            }
+            
+            
+        }
+
+        let update = function (url, data) {
+            return new Promise((resolve, reject) => {
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", url, true);
+                xhr.withCredentials = true;
+                xhr.setRequestHeader("content-type", "application/json");
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        var cType = xhr.getResponseHeader("content-type");
+                        if (cType == "application/json") {
+                            resolve(JSON.parse(xhr.response));
+                        }
+                        else {
+                            resolve(xhr.response);
+                        }
+                    }
+                    else {
+                        reject(xhr.statusText);
+                    }
+                };
+                xhr.onerror = () => reject(xhr.statusText);
+                let body = JSON.stringify(data);
+                xhr.send({test:"Gavin's Test"});
+            });
+        };
+    </script>
+
+    {{/if}}
+
+{{else}}
+    <h1>You do not have permission to view this page.</h1>
+{{/ifHasRole}}
+{{else}}
+    <h1>You are not logged in.</h1>
+{{/if}}

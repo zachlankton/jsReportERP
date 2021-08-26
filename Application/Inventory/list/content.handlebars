@@ -1,0 +1,101 @@
+
+{{#if user.isAuthenticated}}
+{{#ifHasRole "Sales"}}
+    {{#with query}}
+        {{defineSearch "search" ""}}
+    {{/with}}
+
+    {{getToday}}
+    {{getNextWeek}}
+    
+
+    {{#db_query 
+     "ledger"
+    "   SELECT date,
+            location,
+            partNo,
+            partRev,
+            partStatus,
+            qty,
+            transactionID
+        FROM mmp
+        WHERE dbNamespace = '/Ledger'
+            AND docstatus = 'Submitted'
+            ((searchQuery))
+        ORDER BY date, partNo, partRev, qty
+    "
+    
+    
+    }}
+
+    <div class="w3-row">
+        <column class="w3-col m2" >
+            <h4>Search All Ledger</h4>
+        </column>
+        
+        <input class="w3-col m6 w3-input w3-border" 
+                name="search" type="search" placeholder="Search..." 
+                value="{{query.search}}" autofocus 
+                onfocus="this.select()" 
+                onsearch="location.search='search=' + encodeURIComponent(this.value)"/>    
+        <column class="w3-col m2">
+            <p class="w3-center">
+                <a href="https://docs.couchbase.com/server/5.1/fts/query-string-queries.html" target="_blank">Query String Search Help</a>
+            </p>
+        </column>
+        <column class="w3-col m2">
+            <p class="w3-center">
+                <a href="https://erp2.mmpmg.com/Inventory/list?search=%2BpartNo%3A%2285204%22%20%2Blocation%3A%22innovative%22%20%2Bdate%3A%3E%222020-10-01%22" >Search Example</a>
+            </p>
+        </column>
+
+        
+    </div>
+    {{!-- {{toJSON ledger}} --}}
+    {{processRunningTotals}}
+    <table class="w3-table-all">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Date</th>
+                <th>Doc ID</th>
+                <th>Part No</th>
+                <th>Rev</th>
+                <th>Status</th>
+                <th>Location</th>
+                <th>Qty</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each ledger}}
+            <tr>
+                <td> {{@index}} </td>
+                <td> {{date}} </td>
+                <td> {{transactionID}} </td>
+                <td> {{partNo}} </td>
+                <td> {{partRev}} </td>
+                <td> {{partStatus}} </td>
+                <td> {{location}} </td>
+                <td> {{qty}} </td>
+                <td> {{runningTotal}} </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    
+
+    {{/db_query}}
+
+{{else}}
+
+    <h4>You do Not have permission to view this resource</h4>
+
+{{/ifHasRole}}
+
+
+{{else}}
+{{!-- NOT LOGGED IN --}}
+    
+    {#child /Application/login}
+{{/if}}

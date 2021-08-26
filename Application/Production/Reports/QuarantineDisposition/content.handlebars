@@ -1,0 +1,18 @@
+{{#if user.isAuthenticated}}
+
+    {{#db_query
+        "reports"
+        "SELECT mmp.*
+         FROM mmp 
+         WHERE dbNamespace = '/ProductionReports'
+        "
+    }}
+
+    <h1>Quarantine Disposition</h1>
+
+    <script>
+        var data={{toJSON reports}};
+    </script>
+
+    {{/db_query}}
+{{/if}}

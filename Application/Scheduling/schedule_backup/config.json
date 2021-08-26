@@ -1,0 +1,17 @@
+{
+    "name": "schedule_backup",
+    "recipe": "html",
+    "shortid": "HPPXbiJlo4",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1611939300305
+    },
+    "modificationDate": {
+        "$$date": 1613161030954
+    },
+    "_id": "ccG1CGzhJRtT1PLE",
+    "$entitySet": "templates"
+}

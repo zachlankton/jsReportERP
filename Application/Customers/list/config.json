@@ -1,0 +1,22 @@
+{
+    "name": "list",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1603331063142
+    },
+    "modificationDate": {
+        "$$date": 1603337745409
+    },
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ],
+    "shortid": "7zzeMRH",
+    "_id": "hBNWXZGgJaOCMihD",
+    "$entitySet": "templates"
+}

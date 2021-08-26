@@ -1,0 +1,22 @@
+{
+    "name": "delete",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1604088540618
+    },
+    "modificationDate": {
+        "$$date": 1604088540618
+    },
+    "scripts": [
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ],
+    "shortid": "kZP60Mf",
+    "_id": "CWoGqbMag6owbDiH",
+    "$entitySet": "templates"
+}

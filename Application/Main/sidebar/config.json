@@ -1,0 +1,18 @@
+{
+    "shortid": "6Pc9aDihxm",
+    "name": "sidebar",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1602107727177
+    },
+    "modificationDate": {
+        "$$date": 1624585128283
+    },
+    "_id": "PeHfuJQzUM7piI1g",
+    "$entitySet": "templates",
+    "scripts": []
+}

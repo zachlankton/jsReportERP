@@ -1,0 +1,17 @@
+{
+    "shortid": "hgF1tJfk-I",
+    "name": "gridSched",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1610717430268
+    },
+    "modificationDate": {
+        "$$date": 1611117072902
+    },
+    "_id": "jUVlyCOfOLZ9ACy8",
+    "$entitySet": "templates"
+}

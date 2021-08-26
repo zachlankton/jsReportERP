@@ -1,0 +1,25 @@
+{
+    "shortid": "UiA2x6JTJg",
+    "name": "employee_list",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1612932900975
+    },
+    "modificationDate": {
+        "$$date": 1619667883114
+    },
+    "_id": "fPzCBEtv3zkSgJyt",
+    "$entitySet": "templates",
+    "scripts": [
+        {
+            "shortid": "E_DvTnYx8w"
+        },
+        {
+            "shortid": "tpgt6Tu-NR"
+        }
+    ]
+}

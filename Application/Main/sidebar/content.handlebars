@@ -1,0 +1,70 @@
+{#asset /Application/Main/sidebar.css}
+
+<nav class="w3-sidebar w3-collapse w3-theme-l4" style="z-index:3;width:250px;" id="mySidebar"><br>
+  
+  {#child /Application/Main/user_info}
+
+  {{!-- Sidebar Menu --}}
+  <div class="w3-bar-block">
+    <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+
+    {{!--       menu_link helper arguments           --}}
+    {{!--     {{ menu_link href icon text }}      --}}
+
+    
+
+    {{#ifHasRole "Quoting"}}
+      {{ menu_link 'fa-search-dollar w3-text-yellow' 'Quoting +'}}
+      <div class="nested-menu w3-theme-l3 {{showHide "/Quotes"}}">
+        {{nested_menu_link '/Quotes/form?docid=new' 'fa-plus-circle' 'New Quote'}}
+        {{nested_menu_link '/Quotes/list' 'fa-list-alt' 'Quotes List'}}
+      </div>
+    {{/ifHasRole}}
+
+    {{#ifHasRole "Sales"}}
+      {{ menu_link 'fa-dollar-sign w3-text-green' 'Sales +'}}
+      <div class="nested-menu w3-theme-l3 {{showHide "/Sales /Customers"}}">
+        {{nested_menu_link '/Sales/form?docid=new' 'fa-plus-circle' 'New Sales Order'}}
+        {{nested_menu_link '/Sales/list' 'fa-list-alt' 'Sales Order List'}}
+        {{nested_menu_link '/Customers/list' 'fa-list-alt' 'Customers List'}}
+      </div>
+    {{/ifHasRole}}
+
+    {{ menu_link 'fa-tools w3-text-black' 'Production +'}}
+      <div class="nested-menu w3-theme-l3 {{showHide "/Production"}}">
+        {{nested_menu_link '/Production/Reports/Form?from=/Production/Reports/List' 'fa-plus-circle' 'New Production Report'}}
+        {{nested_menu_link '/Production/Reports/List' 'fa-list-alt' 'Report List'}}
+        {{nested_menu_link '/Production/Reports/WeekDisp' 'fa-chart-bar' 'Production Cell Overview'}}
+        {{nested_menu_link '/Production/Reports/InspectionOverview' 'fa-chart-bar' 'Inspection Overview'}}
+        {{nested_menu_link '/Production/Reports/MaintenanceList' 'fa-list-alt' 'Maintenance List'}}
+      </div>
+
+    {{#ifHasRole "Stock"}}
+      {{ menu_link 'fa-warehouse w3-text-grey' 'Stock/Inventory +'}}
+      <div class="nested-menu w3-theme-l3 {{showHide "/Inventory"}}">
+        {{nested_menu_link '/Inventory/list' 'fa-cog' 'Ledger'}}
+      </div>
+    {{/ifHasRole}}
+
+    {{#ifHasRole "Scheduling"}}
+      {{ menu_link 'fa-calendar w3-text-blue' 'Scheduling +'}}
+      <div class="nested-menu w3-theme-l3 {{showHide "/Scheduling"}}">
+        {{nested_menu_link '/Scheduling/schedule?docid=feb' 'fa-cog' 'Schedule'}}
+      </div>
+    {{/ifHasRole}}
+
+    {{#ifHasRole "HR"}}
+      {{ menu_link 'fa-users' 'Human Resources +'}}
+      <div class="nested-menu w3-theme-l3 w3-hide">
+        {{nested_menu_link '/HR/employee_list' 'fa-address-book' 'User List'}}
+      </div>
+    {{/ifHasRole}}
+
+    {{#ifHasRole "Employee"}}
+      {{ nested_menu_link '/HR/employee/employee-portal' 'fa-users w3-text-red' 'Employees'}}
+    {{/ifHasRole}}
+    
+    
+ 
+  </div>
+</nav>

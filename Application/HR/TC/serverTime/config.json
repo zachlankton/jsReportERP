@@ -1,0 +1,12 @@
+{
+    "shortid": "8VM2cJswRV",
+    "name": "serverTime",
+    "creationDate": {
+        "$$date": 1614313313890
+    },
+    "modificationDate": {
+        "$$date": 1614313541942
+    },
+    "_id": "vwsm9AcTp70y0wzm",
+    "$entitySet": "scripts"
+}

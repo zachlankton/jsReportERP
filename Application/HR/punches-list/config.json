@@ -1,0 +1,17 @@
+{
+    "shortid": "aLtnydVRki",
+    "name": "punches-list",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1612194299261
+    },
+    "modificationDate": {
+        "$$date": 1612195087626
+    },
+    "_id": "LjnlPA95Zu6l5bwd",
+    "$entitySet": "templates"
+}

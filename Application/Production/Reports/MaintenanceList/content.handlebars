@@ -1,0 +1,91 @@
+{{#if user.isAuthenticated}}
+    {{#with query}}
+        {{defineSearch "search" ""}}
+    {{/with}}
+
+    {{#db_query 
+    "reports"
+    "   SELECT mmp.* FROM mmp
+        WHERE dbNamespace = '/ProductionReports'
+        AND operation = 'Maintenance'
+        ((searchQuery))
+        ORDER BY date DESC
+    "
+    }}
+
+    <div class="w3-row">
+        <column class="w3-col m2" >
+            <h4>Search All Ledger</h4>
+        </column>
+        
+        <input class="w3-col m6 w3-input w3-border" 
+                name="search" type="search" placeholder="Search..." 
+                value="{{query.search}}" autofocus 
+                onfocus="this.select()" 
+                onsearch="location.search='search=' + encodeURIComponent(this.value)"/>    
+        <column class="w3-col m2">
+            <p class="w3-center">
+                <a href="https://docs.couchbase.com/server/5.1/fts/query-string-queries.html" target="_blank">Query String Search Help</a>
+            </p>
+        </column>
+
+        
+    </div>
+
+<table class="w3-table-all w3-hoverable">
+    <thead>
+        <tr class="w3-blue">
+            <th style="width:25%;">Date</th>
+            <th style="width:25%;">Location</th>
+            <th style="width:70%;">Details / Notes</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each reports}}
+        <tr>
+            <td style="cursor:pointer" onclick="location.href='/Production/Reports/Form?docid={{docid}}'+'&from='+location.pathname">{{date}}</td>
+            <td style="cursor:pointer" onclick="location.href='/Production/Reports/Form?docid={{docid}}'+'&from='+location.pathname">{{location}}</td>
+            <td style="cursor:pointer" onclick="location.href='/Production/Reports/Form?docid={{docid}}'+'&from='+location.pathname">
+                <p><b>{{description}}</b></p>
+                <p>{{notes}}</p>
+            </td>
+            <td><button class="w3-button w3-red" onclick="document.location.href='/Production/Reports/delete?docid={{docid}}'">X</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<script>
+    
+
+    function toggleSort(field) {
+        var el = document.getElementById('sorted-'+field);
+        switch(el.className) {
+            case "DESC":
+                el.className = "ASC";
+                el.innerHTML = "";
+
+                var visualASC = document.createElement("i");
+                    visualASC.classList.add("fas","fa-caret-up");
+                el.appendChild(visualASC);
+                break;
+            case "ASC":
+                el.className = "";
+                el.innerHTML = "";
+                break;
+            case "":
+                el.className = "DESC";
+                el.innerHTML = "";
+
+                var visualDESC = document.createElement("i");
+                    visualDESC.classList.add("fas","fa-caret-down");
+                el.appendChild(visualDESC);
+                break;
+        }
+    }
+</script>
+
+    {{/db_query}}
+
+{{/if}}

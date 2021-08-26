@@ -1,0 +1,24 @@
+{
+    "name": "schedule_print",
+    "recipe": "chrome-pdf",
+    "shortid": "FUGgQD09eN",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true,
+        "waitForJS": false,
+        "width": "17in",
+        "height": "13in",
+        "marginTop": "0.25in",
+        "marginRight": "0.25in",
+        "marginBottom": "0.25in",
+        "marginLeft": "0.25in"
+    },
+    "creationDate": {
+        "$$date": 1613161056661
+    },
+    "modificationDate": {
+        "$$date": 1613163362018
+    },
+    "_id": "vw98L01Qlb944zNp",
+    "$entitySet": "templates"
+}

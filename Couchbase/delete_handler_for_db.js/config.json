@@ -1,0 +1,13 @@
+{
+    "name": "delete_handler_for_db.js",
+    "creationDate": {
+        "$$date": 1602733167255
+    },
+    "modificationDate": {
+        "$$date": 1613415482645
+    },
+    "shortid": "gpeNdR1",
+    "_id": "aWFOBT8pfdup5Nrq",
+    "$entitySet": "assets",
+    "isSharedHelper": true
+}

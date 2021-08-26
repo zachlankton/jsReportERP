@@ -1,0 +1,17 @@
+{
+    "name": "pdf",
+    "recipe": "html",
+    "engine": "handlebars",
+    "chrome": {
+        "printBackground": true
+    },
+    "creationDate": {
+        "$$date": 1603115066381
+    },
+    "modificationDate": {
+        "$$date": 1613665185574
+    },
+    "shortid": "7dLgnP1",
+    "_id": "z20eoJk56pauies1",
+    "$entitySet": "templates"
+}
